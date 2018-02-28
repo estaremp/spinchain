@@ -15,6 +15,7 @@ implicit none
 !!initial conditions. Properties such Fidelity, Entropy and Entanglement of Formation
 !!can be computed by using the relevant subroutines
 !a change
+
 !NOTES:
 ! *1* all the comments marked with (E.I.) indicate that the process has been done this way for the
 !     sake of efficiency of the program. I.e., due to the fact that we are working with wery large
@@ -78,26 +79,6 @@ real(kind=dbl), allocatable, dimension(:,:) :: hami, hami3 !Hamiltonian
 complex(kind=dbl), allocatable, dimension(:,:) :: hami2 !other hamiltonians
 
 
-!logicals
-
-logical :: linear
-logical :: branched
-logical :: crossed
-logical :: lattice
-logical :: crossed_three, crossed_four, crossed_five, crossed_six
-logical :: squared
-logical :: uniform
-logical :: pst
-logical :: ssh_a
-logical :: ssh_b
-logical :: abc
-logical :: kitaev
-logical :: random
-logical :: output
-logical :: graphical !do you want graphical outputs 
-                     !(NOTE: system calls affect heavily to the time performance of any code)
-logical :: files
-
 character :: a,b,c,d
 character(len=32) :: tmp,tmp1,tmp2
 character(len=500) :: fmt1,fmt2,fmt3,fmt4 !format descriptors
@@ -110,45 +91,7 @@ integer,dimension(8) :: values
 !!!! DEFINING THE DESIRED TYPE OF CHAIN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-!*0*Define connectivity
-
-!main class
-linear = .false.
-crossed = .true.
-lattice = .false.
-
-!*1*Choose ONE coupling pattern:
-
-uniform = .true.
-pst = .false.
-ssh_a = .false.
-ssh_b = .false.
-abc = .false.
-kitaev = .false.
-
-!write(*,*) 'What type of chain do you want?'
-!write(*,*) 'Uniform: enter u'
-!write(*,*) 'PST: enter p'
-!
-!
-!read(*,*) a
-!
-!if (a=='u') then
-!    uniform = .true.
-!else if (a=='p') then
-!    pst = .true.
-!endif
-
-
-!*2*Choose output/graphics:
-
-output = .true.
-files = .true.
-graphical = .true.
-
-!*3*Types of disorder:
-
-random = .false.
+!this is done in the module called PARAMETERS
 
 write(*,*) '>> Defining System'
 
@@ -351,7 +294,7 @@ if (linear) then
     con_lim3 = 0
 endif
 
-!!!!TO BE GENERALIZED, LAZY BITCH
+!!!!TO BE GENERALIZED
 !
 !len_branch = ((2*(N - 1)/branches)+1)
 !do i=1,branches-1
@@ -554,9 +497,9 @@ write(*,*) '>> Coupling pattern defined'
 allocate(hami(vectorstotal,vectorstotal))
 
 if (linear) then
-call build_hamiltonian_linear(HT,Js,N,vectorstotal,hami)
+    call build_hamiltonian_linear(HT,Js,N,vectorstotal,hami)
 else if (crossed) then
-call build_hamiltonian_crosses(HT,Js,N,vectorstotal,hami,branches)
+    call build_hamiltonian_crosses(HT,Js,N,vectorstotal,hami,branches)
 endif
 
 !Stdout Hamiltonian

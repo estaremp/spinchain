@@ -56,7 +56,6 @@ do i=1,vectorstotal
 enddo
 
 step_size = totalTime/steps
-
 time = 0._dbl
 
 do while (time<=totalTime)
@@ -78,28 +77,26 @@ do while (time<=totalTime)
         c_i(i) = sum_vec
     enddo
 
-siteProb=0
-do i=1,vectorstotal
-    do k=1,N
-        if (HT(i,k)==1) then
-            siteProb(k) = siteProb(k) + fidelity(i)
-        endif
+    siteProb=0
+    do i=1,vectorstotal
+        do k=1,N
+            if (HT(i,k)==1) then
+                siteProb(k) = siteProb(k) + fidelity(i)
+            endif
+        enddo
     enddo
-enddo
 
     !Fidelity
     do i=1,vectorstotal
         fidelity(i) = (abs(c_i(i)))**2
     enddo
 
-
-
-    !if (pst) then
-    !    write(44,*), time*J_0/pi, fidelity
-    !else
+    if (pst) then
+        !write(44,*), time*J_0/pi, fidelity
+    else
         write(44,*) time, fidelity
         write(45,*) time, siteProb
-    !endif
+    endif
 
     time = time + step_size
 

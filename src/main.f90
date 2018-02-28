@@ -50,7 +50,6 @@ integer, allocatable, dimension (:) :: iwork
 
 !floats
 
-real(kind=dbl) :: J_0              !characteristic coupling (energy scale) for PST
 real(kind=dbl) :: norm,normal,orto !normaliztion constant
 real(kind=dbl) :: fidelity_e,prob  !fidelity
 
@@ -86,70 +85,12 @@ character(len=32) :: tmp,tmp1,tmp2
 character(len=500) :: fmt1,fmt2,fmt3,fmt4 !format descriptors
 character(len=32) :: class, subclass
 
-integer,dimension(8) :: values
 
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!! DEFINING THE DESIRED TYPE OF CHAIN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!this is done in the module called PARAMETERS
-
-write(*,*) '>> Defining System'
+integer,dimension(8) :: values !array with date
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!! INITIAL CHECKS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!! START PROGRAM AND WRITE OUTPUT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-if (linear) then
-
-    if (ssh_a.or.ssh_b) then
-        if (MOD(N-1,4)/=0) then
-            STOP 'ERROR: for type (a) ssh chain N needs to be odd and N-1 needs to be divisible by 4.'
-        endif
-    endif
-
-    if (abc) then
-        if (MOD(N-3,4)/=0) then
-            STOP 'ERROR: for type ABC chain N needs to be odd and N-3 needs to be divisible by 4.'
-        endif
-    endif
-
-    if (kitaev) then
-        if (MOD(N,2)/=0) then
-            STOP 'ERROR: for a kitaev chain N needs to be even.'
-        endif
-    endif
-
-endif
-
-if (branched) then
-
-if (branches==3) then
-    if (MOD((N-1),3)/=0) then
-        STOP 'ERROR: Triple branched networks need to have EVEN number of sites and (N-1) needs to be divisible by 3.'
-    endif
-endif
-
-if (branches==4) then
-    if (MOD((N-1),4)/=0) then
-        STOP 'ERROR: Four branched networks need to have ODD number of sites and (N-1) needs to be divisible by 4.'
-    endif
-endif
-
-if (branches==5) then
-    if (MOD((N-1),5)/=0) then
-        STOP 'ERROR: Five branched networks need to have EVEN number of sites and (N-1) needs to be divisible by 5.'
-    endif
-endif
-
-if (branches==6) then
-    if (MOD((N-1),6)/=0) then
-        STOP 'ERROR: Six branched networks need to have ODD number of sites and (N-1) needs to be divisible by 6.'
-    endif
-endif
-
-endif
 
 if (output) then
     !retrieve date
@@ -167,6 +108,68 @@ if (output) then
     write(40,103) values(3),values(2),values(1),values(5),values(6)
     write(40,104)
     write(40,*)
+endif
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!! DEFINING THE DESIRED TYPE OF CHAIN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!**********************************************
+!this is done in the module called PARAMETERS
+!you should ONLY modify that module to set the
+!conditions and structure of the chain.
+!**********************************************
+
+write(*,*) '>> Defining System'
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!! INITIAL CHECKS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+if (linear) then
+    if (ssh_a.or.ssh_b) then
+        if (MOD(N-1,4)/=0) then
+            STOP 'ERROR: for type (a) ssh chain N needs to be odd and N-1 needs to be divisible by 4.'
+        endif
+    endif
+
+    if (abc) then
+        if (MOD(N-3,4)/=0) then
+            STOP 'ERROR: for type ABC chain N needs to be odd and N-3 needs to be divisible by 4.'
+        endif
+    endif
+
+    if (kitaev) then
+        if (MOD(N,2)/=0) then
+            STOP 'ERROR: for a kitaev chain N needs to be even.'
+        endif
+    endif
+endif
+
+if (branched) then
+    if (branches==3) then
+        if (MOD((N-1),3)/=0) then
+            STOP 'ERROR: Triple branched networks need to have EVEN number of sites and (N-1) needs to be divisible by 3.'
+        endif
+    endif
+
+    if (branches==4) then
+        if (MOD((N-1),4)/=0) then
+            STOP 'ERROR: Four branched networks need to have ODD number of sites and (N-1) needs to be divisible by 4.'
+        endif
+    endif
+
+    if (branches==5) then
+        if (MOD((N-1),5)/=0) then
+            STOP 'ERROR: Five branched networks need to have EVEN number of sites and (N-1) needs to be divisible by 5.'
+        endif
+    endif
+
+    if (branches==6) then
+        if (MOD((N-1),6)/=0) then
+            STOP 'ERROR: Six branched networks need to have ODD number of sites and (N-1) needs to be divisible by 6.'
+        endif
+    endif
 endif
 
 write(*,*) '>> Initial checks'
@@ -288,8 +291,8 @@ write(*,*) '>> Defining initial injection'
 
 !normalization factor dependenig
 !on the number of initial injections
-norm=(1._dbl/sqrt(float(numI)))
 
+norm=(1._dbl/sqrt(float(numI)))
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!! DEFINE CONNECTIVITY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -349,143 +352,7 @@ endif
 !!!! DEFINE COUPLING PATTERN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-!Uniform:
-
-if (uniform) then
-    do i=1,N
-        Js(i) = J_max
-    enddo
-endif
-
-!PST
-
-if (pst) then
-    J_0 = (2._dbl*J_max)/(N*sqrt(1._dbl-(1._dbl/(N**2))))
-    do i=1,N
-        Js(i) = J_0*sqrt(float(i*(N-i)))
-    enddo
-endif
-
-!SSH
-
-
-!type (a)
-if (ssh_a) then
-    do i=1,N-1
-        if (i<=(N/2)) then !Induce alpha-configuration
-            if (MOD(i,2)==0) then
-                Js(i)=J_weak
-            else
-                Js(i)=J_strong
-            endif
-        endif
-
-        if (i>(N/2)) then !Induce beta-configuration
-            if (MOD(i,2)==0) then
-                Js(i)=J_strong
-            else
-                Js(i)=J_weak
-            endif
-        endif
-    enddo
-endif
-
-!type (b)
-if (ssh_b) then
-    do i=1,N-1
-        if (i<=(N/2)) then !Induce alpha-configuration
-            if (MOD(i,2)==0) then
-                Js(i)=J_strong
-            else
-                Js(i)=J_weak
-            endif
-        endif
-
-        if (i>(N/2)) then !Induce beta-configuration
-            if (MOD(i,2)==0) then
-                Js(i)=J_weak
-            else
-                Js(i)=J_strong
-            endif
-        endif
-    enddo
-endif
-
-!abc
-if (abc) then
-    if (linear) then
-    do i=1,N-1
-        if (i<=(N/2)) then
-            if (MOD(i,2)==0) then
-                Js(i)=J_strong
-            else
-                Js(i)=J_weak
-            endif
-        else
-            if (MOD(i,2)==0) then
-                Js(i)=J_weak
-            else
-                Js(i)=J_strong
-            endif
-        endif
-    enddo
-    endif
-
-
-    if (crossed) then
-    do i=1,N-1
-        if (i<len_branch) then
-            if (i<(hub)) then
-                if (MOD(i,2)==0) then
-                    Js(i)=J_strong
-                else
-                    Js(i)=J_weak
-                endif
-            else
-                if (MOD(i,2)==0) then
-                    Js(i)=J_weak
-                else
-                    Js(i)=J_strong
-                endif
-            endif
-        endif
-        if (i>=len_branch) then
-            if (i<(con_lim1+((len_branch-1)/2))) then
-                if (MOD(i,2)==0) then
-                    Js(i)=J_strong
-                else
-                    Js(i)=J_weak
-                endif
-            else
-                if (MOD(i,2)==0) then
-                    Js(i)=J_weak
-                else
-                    Js(i)=J_strong
-                endif
-            endif
-        endif
-    enddo
-
-    !Js(1)=J_strong/sqrt(2._dbl)
-    !Js(2)=J_strong/sqrt(2._dbl)
-    !Js(3)=J_strong/sqrt(2._dbl)
-    !Js(4)=J_strong/sqrt(2._dbl)
-
-    endif
-endif
-
-
-!Kitaev
-if (kitaev) then
-    do i=1,N-1
-        if (MOD(i,2)==0) then
-            Js(i)=J_strong
-        else
-            Js(i)=J_weak
-        endif
-    enddo
-endif
-
+call couplings(Js)
 
 !Stdout coupling pattern
 301 FORMAT ("(spin",I3,")-(spin",I3,") -->",F6.2)
@@ -595,35 +462,35 @@ do v=1,vectorstotal
 enddo
 
 !!Stdout Eigenvalues
-!if (output) then
-!
-!    !set formats
-!    write(tmp,'(i3.1)') vectorstotal
-!    fmt1='(1X,i3.1,1X,'//tmp//'("(",f7.3,f7.3,")"))'
-!    fmt2='(6X,'
-!
-!    do i=1,vectorstotal-1
-!        write(tmp,'(i3.1)') i
-!        fmt2=trim(fmt2)//'"Eigenvector'//trim(adjustl(tmp))//'",3X,'
-!    enddo
-!
-!    fmt2=trim(fmt2)//")"
-!
-!    !Eigenvalues
-!    write(40,FMT=202), 'EIGENVALUES:'
-!    do i=1,vectorstotal
-!        if (eigvals(i)==0._dbl) cycle
-!        write(40,*), eigvals(i)
-!    enddo
-!
-!    !Eigenvectors
-!    write(40,FMT=202), 'EIGENVECTORS'
-!
-!    write(40,fmt2)
-!    do i=1,vectorstotal
-!        write(40,fmt1), i ,(hami2(i,:))
-!    enddo
-!endif
+if (output) then
+
+    !set formats
+    write(tmp,'(i3.1)') vectorstotal
+    fmt1='(1X,i3.1,1X,'//tmp//'("(",f7.3,f7.3,")"))'
+    fmt2='(6X,'
+
+    do i=1,vectorstotal
+        write(tmp,'(i3.1)') i
+        fmt2=trim(fmt2)//'"Eigenvector'//trim(adjustl(tmp))//':",3X,'
+    enddo
+
+    fmt2=trim(fmt2)//")"
+
+    !Eigenvalues
+    write(40,FMT=202) 'EIGENVALUES:'
+    do i=1,vectorstotal
+        if (eigvals(i)==0._dbl) cycle
+        write(40,*) eigvals(i)
+    enddo
+
+    !Eigenvectors
+    write(40,FMT=202) 'EIGENVECTORS'
+
+    write(40,fmt2)
+    do i=1,vectorstotal
+        write(40,fmt1) i ,(hami2(i,:))
+    enddo
+endif
 
 !Save data in files
 if (files) then
@@ -682,6 +549,8 @@ if (graphical) then
 
     !Writes in a file data needed for plots
     open(unit=46,file='graphical.data',status='unknown')
+    501 FORMAT ("GRAPHICAL=",A)
+    write(46,501) graphical
     write(tmp,'(i5.2)') vectorstotal
     601 FORMAT ("VECTORS=",A)
     write(46,601) adjustl(trim(tmp))
@@ -698,7 +567,7 @@ if (graphical) then
 endif
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!! FREE SPACE AND CLOSE FILES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!! FREE SPACE AND CLOSE FILES AND CLEAN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 if (output) then

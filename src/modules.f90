@@ -88,6 +88,7 @@ logical, parameter :: random = .false.
 logical, parameter :: output = .true.
 logical, parameter :: graphical = .true.
 logical, parameter :: files = .true.
+logical, parameter :: clean = .true.
 
 
 END MODULE
@@ -101,6 +102,7 @@ implicit none
 CONTAINS
 
     include 'BaseGenerator.f90'
+    include 'Couplings.f90'
     include 'Hamiltonian_linear.f90'
     include 'Hamiltonian_crosses.f90'
     include 'Dynamics.f90'

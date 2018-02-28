@@ -8,7 +8,7 @@ plot = src/Plotting
 bin = bin
 
 #Define variables
-main = $(bin)/main.o  
+main = $(bin)/MAIN.o  
 modules = $(src)/modules.f90
 plots = $(bin)/*.pyc
 

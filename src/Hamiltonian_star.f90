@@ -52,6 +52,10 @@ do i=3,branches-1
     limits(i) = limits(i-1) + (len_branch-2)
 enddo
 
+!*************************************!
+!******+ BUILD HAMILTONIAN ***********!
+!*************************************!
+
 hami=0.0_dbl
 do i=1,vectorstotal
     do j=1,vectorstotal

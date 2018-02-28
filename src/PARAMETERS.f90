@@ -1,26 +1,3 @@
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!  CONSTANTS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-MODULE constants
-implicit none
-
-!!Precision
-integer, parameter :: sbl = 4
-integer, parameter :: dbl = 8
-
-!!Pi
-real(kind=dbl), parameter :: pi = 3.141592654_dbl
-
-!!Imaginary i
-complex(kind=dbl), parameter :: im = cmplx(0._dbl,1._dbl,kind=dbl)
-
-END MODULE
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!  PARAMETERS - modify THIS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 MODULE parameters
 
 use constants
@@ -92,18 +69,3 @@ logical, parameter :: clean = .true.
 
 END MODULE
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!  SUBROUTINES DEPENDENCIES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-MODULE dependencies
-implicit none
-
-CONTAINS
-
-    include 'BaseGenerator.f90'
-    include 'Couplings.f90'
-    include 'Hamiltonian_linear.f90'
-    include 'Hamiltonian_star.f90'
-    include 'Dynamics.f90'
-
-END MODULE

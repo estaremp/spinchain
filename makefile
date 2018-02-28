@@ -9,7 +9,9 @@ bin = bin
 
 #Define variables
 main = $(bin)/MAIN.o  
-modules = $(src)/modules.f90
+const = $(src)/CONSTANTS.f90
+param = $(src)/PARAMETERS.f90
+depen = $(src)/DEPENDENCIES.f90
 plots = $(bin)/*.pyc
 
 #Compilers 
@@ -24,23 +26,37 @@ running: $(bin) | exec
 
 #Execute procedure, first compile programs then plots
 exec: $(main) | $(plots)
-	$(f90comp) $(libs) $(src)/modules.o $(main) -o run
-	@echo "||||Build succesful!||||"
+	$(f90comp) $(libs) $(src)/c.o $(src)/p.o $(src)/d.o $(main) -o run
+	@echo "***********************"
+	@echo "||||Build succesful||||"
+	@echo "***********************"
+
 
 #Create bin
 $(bin):
+	@echo "***********************"
 	@echo "|||Creating bin||||"
+	@echo "***********************"
 	mkdir -p $(bin)
 
 #Compile programs, first modules
 $(bin)/MAIN.o: $(src)/MAIN.f90 
-	@echo "|||Compiling Fortran||||"
-	$(f90comp) -c $(modules) -o $(src)/modules.o
+	@echo "***********************"
+	@echo "|||Compiling Modules||||"
+	@echo "***********************"
+	$(f90comp) -c $(const) -o $(src)/c.o
+	$(f90comp) -c $(param) -o $(src)/p.o
+	$(f90comp) -c $(depen) -o $(src)/d.o
+	@echo "***********************"
+	@echo "|||Compiling Main||||"
+	@echo "***********************"
 	$(f90comp) -c $^ -o $@
 	
 #Compile python plots
 $(bin)/%.pyc: $(plot)/%.py
+	@echo "***********************"
 	@echo "|||Compiling Python||||"
+	@echo "***********************"
 	$(Pycomp) -m py_compile $^ 
 
 #Clean

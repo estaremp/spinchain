@@ -40,7 +40,7 @@ endif
 !type (a)
 if (ssh_a) then
     do i=1,N-1
-        if (i<=(N/2)) then !Induce alpha-configuration
+        if (i<=(N/2)) then !Induce alpha-configuration 
             if (MOD(i,2)==0) then
                 Js(i)=J_weak
             else

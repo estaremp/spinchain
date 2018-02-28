@@ -12,7 +12,9 @@
 !                                                                         !
 !-------------------------------------------------------------------------!
 ! Return value:                                                           !
-!   Js => array with all the couplings                                    !
+!    => Parameters that determine connectivity                            !
+!           + hub                                                         !
+!           + len branch
 !-------------------------------------------------------------------------!
 ! Written by  Marta Estarellas, v0.1, 14/02/2016                          !
 !=========================================================================!
@@ -25,6 +27,7 @@ real(kind=dbl), dimension(N-1), intent(inout) :: Js
 real(kind=dbl) :: J_0              !characteristic coupling (energy scale) for PST
 integer :: i,j,k
 
+SELECT CASE ()
 
 
 end subroutine

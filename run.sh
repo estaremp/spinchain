@@ -12,7 +12,7 @@ make
 #Read variables to be used
 source 'graphical.data'
 
-if [ '$GRAPHICAL' = 'T' ] ;
+if [ $GRAPHICAL = 'T' ] ;
 then
     #Plot stuff
     echo ' >> Plot'

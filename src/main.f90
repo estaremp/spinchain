@@ -546,11 +546,10 @@ write(*,*) '>> Dynamics'
 
 !Graphics
 if (graphical) then
-
     !Writes in a file data needed for plots
     open(unit=46,file='graphical.data',status='unknown')
     501 FORMAT ("GRAPHICAL=",A)
-    write(46,501) graphical
+    write(46,501) "T"
     write(tmp,'(i5.2)') vectorstotal
     601 FORMAT ("VECTORS=",A)
     write(46,601) adjustl(trim(tmp))

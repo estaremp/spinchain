@@ -12,21 +12,17 @@
 ! Written by Marta Estarellas, v0.1, 31/03/2017                           !
 !=========================================================================!
 
-subroutine injection_dynamics(HT,hami,N,eigvals,vectorstotal,initialVec,totaltime,norm,steps)
+subroutine injection_dynamics(HT,hami,eigvals,vectorstotal,initialVec,norm)
 
-!TODO: to put in module
-integer, parameter :: dbl = 8
-complex(kind=dbl), parameter :: im = cmplx(0._dbl,1._dbl,kind=dbl)
+use constants
+use parameters
 
 !inputs
-integer, intent(in) :: N
 integer, intent(in) :: vectorstotal
-integer, intent(in) :: steps
 integer, intent(in) :: initialVec
 integer, dimension(vectorstotal,vectorstotal), intent(in) :: HT
 
 real(kind=dbl), intent(in) :: norm
-real(kind=dbl), intent(in) :: totaltime
 
 real(kind=dbl), dimension(vectorstotal), intent(in) :: eigvals
 complex(kind=dbl), dimension(vectorstotal,vectorstotal), intent(in) :: hami
@@ -59,11 +55,11 @@ do i=1,vectorstotal
     a_m(i) = norm*dconjg(hami(initialVec,i))
 enddo
 
-step_size = totaltime/steps
+step_size = totalTime/steps
 
 time = 0._dbl
 
-do while (time<=totaltime)
+do while (time<=totalTime)
 
     do i=1,vectorstotal
         do j=1,vectorstotal
@@ -101,8 +97,8 @@ enddo
     !if (pst) then
     !    write(44,*), time*J_0/pi, fidelity
     !else
-        write(44,*), time, fidelity
-        write(45,*), time, siteProb
+        write(44,*) time, fidelity
+        write(45,*) time, siteProb
     !endif
 
     time = time + step_size

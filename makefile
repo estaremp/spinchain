@@ -8,8 +8,8 @@ plot = src/Plotting
 bin = bin
 
 #Define variables
-program = $(bin)/main.o
-dependencies = $(src)/modules.f90
+main = $(bin)/main.o  
+modules = $(src)/modules.f90
 plots = $(bin)/*.pyc
 
 #Compilers 
@@ -23,8 +23,8 @@ libs = -llapack -lblas
 running: $(bin) | exec 
 
 #Execute procedure, first compile programs then plots
-exec: $(program) | $(plots)
-	$(f90comp) $(libs) $(src)/modules.o $(program) -o run
+exec: $(main) | $(plots)
+	$(f90comp) $(libs) $(src)/modules.o $(main) -o run
 	@echo "||||Build succesful!||||"
 
 #Create bin
@@ -35,7 +35,7 @@ $(bin):
 #Compile programs, first modules
 $(bin)/%.o: $(src)/%.f90 
 	@echo "|||Compiling Fortran||||"
-	$(f90comp) -c $(dependencies) -o $(src)/modules.o
+	$(f90comp) -c $(modules) -o $(src)/modules.o
 	$(f90comp) -c $^ -o $@
 	
 #Compile python plots
@@ -47,7 +47,6 @@ $(bin)/%.pyc: $(plot)/%.py
 clean:
 	@echo "|||Cleaning|||"
 	rm run
-	rm -f $(program)
-	rm -f $(src)/modules.o
+	rm -f *.o
 	rm -f *.mod
 #Endof Makefile

@@ -4,6 +4,8 @@ program spinchain
 use dependencies
 !!load constants
 use constants
+!!load initial parameters
+use parameters
 
 implicit none
 
@@ -19,27 +21,9 @@ implicit none
 !     Hilbert spaces, the subspaces and the factorials are calculated progressively in dependence
 !     of the initial needs
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!! PARAMETERS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!integer, parameters
-
-integer, parameter :: N  = 4        !this is the number of spin sites
-integer, parameter :: branches = 3  !this is the number of branches for crossed systems
-integer, parameter :: exno = 1      !this is the number of excitations |1>
-integer, parameter :: steps = 50000 !this is the number of steps
-
-!float, parameters
-
-real(kind=dbl), parameter :: J_max = 1.0_dbl
-real(kind=dbl), parameter :: J_strong = 1.0_dbl
-real(kind=dbl), parameter :: J_weak = 0.1_dbl
-real(kind=dbl), parameter :: r_noise = 0.0_dbl
-real(kind=dbl), parameter :: error = 0.00000001_dbl !allowed error
-real(kind=dbl), parameter :: totalTime = 100
-
- real(kind=dbl), parameter :: pi     = 3.141592654_dbl
+!***************************************************!
+!******************  VARIABLES *********************!
+!***************************************************!
 
 !integers
 
@@ -227,14 +211,14 @@ if (output) then
     103 FORMAT (20X,I2,"/",I2.1,"/",I4,2X,I2,":",I2)
     104 FORMAT (1X,59("-"))
     open (unit=40,file='spinchain.out',status='replace')
-    write(40,101),
-    write(40,102),
-    write(40,101),
-    write(40,*), '           © Marta P. Estarellas, 27/07/2016              '
-    write(40,*), '                   University of York                     '
-    write(40,103), values(3),values(2),values(1),values(5),values(6)
-    write(40,104),
-    write(40,*),
+    write(40,101)
+    write(40,102)
+    write(40,101)
+    write(40,*) '           © Marta P. Estarellas, 27/07/2016              '
+    write(40,*) '                   University of York                     '
+    write(40,103) values(3),values(2),values(1),values(5),values(6)
+    write(40,104)
+    write(40,*)
 endif
 
 write(*,*) '>> Initial checks'
@@ -315,9 +299,9 @@ if (output) then
 201 FORMAT ('|',I2,'> -->' I2)
 202 FORMAT (/A)
 203 FORMAT (/)
-    write(40,FMT=202), 'BASIS VECTORS:'
+    write(40,FMT=202) 'BASIS VECTORS:'
     do i=1,vectorstotal
-        write(40,*), i,'-->',(HT(i,j),j=1,N)
+        write(40,*) i,'-->',(HT(i,j),j=1,N)
     enddo
 endif
 
@@ -555,9 +539,9 @@ endif
 !Stdout coupling pattern
 301 FORMAT ("(spin",I3,")-(spin",I3,") -->",F6.2)
 if (output) then
-    write(40,FMT=202), 'COUPLING PATTERN:'
+    write(40,FMT=202) 'COUPLING PATTERN:'
     do i=1,N-1
-        write(40,FMT=301), i, i+1, Js(i)
+        write(40,FMT=301) i, i+1, Js(i)
     enddo
 endif
 
@@ -577,9 +561,9 @@ endif
 
 !Stdout Hamiltonian
 if (output) then
-    write(40,FMT=202), 'HAMILTONIAN MATRIX:'
+    write(40,FMT=202) 'HAMILTONIAN MATRIX:'
     do i=1,vectorstotal
-        write(40,*), (hami(i,j),j=1,vectorstotal)
+        write(40,*) (hami(i,j),j=1,vectorstotal)
     enddo
 endif
 
@@ -624,7 +608,7 @@ enddo
 if (files) then
 open(unit=89,file='hami.data',status='unknown')
 do i=1,vectorstotal
-write(89,*), (hami(i,j),j=1,vectorstotal)
+write(89,*) (hami(i,j),j=1,vectorstotal)
 enddo
 close(89)
 endif
@@ -698,9 +682,9 @@ open (unit=43,file='eigenvalues.data',status='unknown')
 
 
 do i=1,vectorstotal
-    write(41,*), real(hami2(i,:))
-    write(42,*), (abs(dconjg(hami2(i,:))*(hami2(i,:))))
-    write(43,*), eigvals(i)
+    write(41,*) real(hami2(i,:))
+    write(42,*) (abs(dconjg(hami2(i,:))*(hami2(i,:))))
+    write(43,*) eigvals(i)
 enddo
 
 
@@ -715,7 +699,7 @@ write(*,*) '>> Hamiltonian Diagonalization'
 !!!! DYNAMICS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-call injection_dynamics(HT,hami2,N,eigvals,vectorstotal,initialVec1,totalTime,norm,steps)
+call injection_dynamics(HT,hami2,eigvals,vectorstotal,initialVec1,norm)
 
 !siteProb=0
 !do i=1,vectorstotal

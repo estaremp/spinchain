@@ -92,7 +92,7 @@ do while (time<=totalTime)
     enddo
 
     if (pst) then
-        !write(44,*), time*J_0/pi, fidelity
+        write(44,*) time, fidelity
     else
         write(44,*) time, fidelity
         write(45,*) time, siteProb

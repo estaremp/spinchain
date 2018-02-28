@@ -32,16 +32,18 @@ integer :: i,j,k,l,m,t,v,w   !loop dummies
 integer :: ii,jj,kk,ll,mm    !more loop dummies
 integer :: prev,next,last    !more fancy loop dummies
 integer :: nit,Ninit,ex      !subroutine Permutations variables
-integer :: len_branch, con_lim1, con_lim2, con_lim3, con_lim4, con_lim5
-integer :: hub, hub_prima, hub_semi
+integer :: len_branch
+integer :: con_lim1
+integer :: con_lim2
+integer :: con_lim3
+integer :: con_lim4
+integer :: con_lim5
+integer :: hub
+integer :: hub_prima
+integer :: hub_semi
 integer :: vectors1ex = N    !Initially set to N, reallocate later if needed (E.I.)
 integer :: vectors2ex = N    !Initially set to N, reallocate later if needed (E.I.)
 integer :: vectors3ex = N    !Initially set to N, reallocate later if needed (E.I.)
-integer :: numI = 1
-integer :: initialVec1 = 3   !Initially injected states (where the excitation sits)
-integer :: initialVec2 = 0   !Initially injected states (where the excitation sits)
-integer :: initialVec3 = 0   !Initially injected states (where the excitation sits)
-integer :: initialVec4 = 0   !Initially injected states (where the excitation sits)
 integer :: vectorstotal      !Sum of all the vectors
 integer :: info, lwork, liwork             !Info in lapack subroutines
 integer, allocatable, dimension (:) :: iwork
@@ -99,6 +101,30 @@ write(*,*) '>> Defining System'
 !!!! INITIAL CHECKS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+if (linear) then
+
+    if (ssh_a.or.ssh_b) then
+        if (MOD(N-1,4)/=0) then
+            STOP 'ERROR: for type (a) ssh chain N needs to be odd and N-1 needs to be divisible by 4.'
+        endif
+    endif
+
+    if (abc) then
+        if (MOD(N-3,4)/=0) then
+            STOP 'ERROR: for type ABC chain N needs to be odd and N-3 needs to be divisible by 4.'
+        endif
+    endif
+
+    if (kitaev) then
+        if (MOD(N,2)/=0) then
+            STOP 'ERROR: for a kitaev chain N needs to be even.'
+        endif
+    endif
+
+endif
+
+if (branched) then
+
 if (branches==3) then
     if (MOD((N-1),3)/=0) then
         STOP 'ERROR: Triple branched networks need to have EVEN number of sites and (N-1) needs to be divisible by 3.'
@@ -120,27 +146,6 @@ endif
 if (branches==6) then
     if (MOD((N-1),6)/=0) then
         STOP 'ERROR: Six branched networks need to have ODD number of sites and (N-1) needs to be divisible by 6.'
-    endif
-endif
-
-
-if (linear) then
-
-if (ssh_a.or.ssh_b) then
-    if (MOD(N-1,4)/=0) then
-        STOP 'ERROR: for type (a) ssh chain N needs to be odd and N-1 needs to be divisible by 4.'
-    endif
-endif
-
-if (abc) then
-    if (MOD(N-3,4)/=0) then
-        STOP 'ERROR: for type ABC chain N needs to be odd and N-3 needs to be divisible by 4.'
-    endif
-endif
-
-if (kitaev) then
-    if (MOD(N,2)/=0) then
-        STOP 'ERROR: for a kitaev chain N needs to be even.'
     endif
 endif
 
@@ -171,7 +176,7 @@ write(*,*) '>> Initial checks'
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 !Calculate number of vectors for each excitation N!/exno!(N-exno)! subspace and the total number
-!this is done progressively, sector by sector for skae of efficiency:
+!this is done progressively, sector by sector for sake of efficiency:
 
 if (exno==1) then
     vectorstotal = vectors1ex+1
@@ -194,6 +199,7 @@ allocate(HT(vectorstotal,N))
 H1 = 0  !1ex subspace matrix
 H2 = 0  !2ex subspace matrix
 H3 = 0  !3ex subspace matrix
+!... keep adding matrices
 HT = 0  !total vectors
 
 !Create the subsectors matrices through a recursive call to Permutations
@@ -235,7 +241,7 @@ if (exno>2) then
     HT(vectors1ex+vectors2ex+2:,:) = H3
 endif
 
-!**NOTE: Add extra subsectors in the same fashion if needed**
+!**(NOTE: Add extra subsectors in the same fashion if needed)**
 
 !Stdout vectors martix
 if (output) then
@@ -279,6 +285,9 @@ write(*,*) '>> Defining initial injection'
 !    print*, tmp
 !    i=i+1
 !enddo
+
+!normalization factor dependenig
+!on the number of initial injections
 norm=(1._dbl/sqrt(float(numI)))
 
 
@@ -352,7 +361,6 @@ endif
 
 if (pst) then
     J_0 = (2._dbl*J_max)/(N*sqrt(1._dbl-(1._dbl/(N**2))))
-
     do i=1,N
         Js(i) = J_0*sqrt(float(i*(N-i)))
     enddo
@@ -653,7 +661,6 @@ call injection_dynamics(HT,hami2,eigvals,vectorstotal,initialVec1,norm)
 !    enddo
 !enddo
 
-
 write(*,*) '>> Dynamics'
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -672,33 +679,32 @@ write(*,*) '>> Dynamics'
 
 !Graphics
 if (graphical) then
-open(unit=46,file='graphical.data',status='unknown')
-write(tmp,'(i5.2)') vectorstotal
-601 FORMAT ("VECTORS=",A)
-write(46,601) adjustl(trim(tmp))
-write(tmp,'(f6.2)') totaltime
-701 FORMAT ("TOTALTIME=",A)
-write(46,701) adjustl(trim(tmp))
-write(tmp,'(i5.2)') initialVec1
-801 FORMAT ("INITIALVEC=",A)
-write(46,801) adjustl(trim(tmp))
+
+    !Writes in a file data needed for plots
+    open(unit=46,file='graphical.data',status='unknown')
+    write(tmp,'(i5.2)') vectorstotal
+    601 FORMAT ("VECTORS=",A)
+    write(46,601) adjustl(trim(tmp))
+    write(tmp,'(f6.2)') totaltime
+    701 FORMAT ("TOTALTIME=",A)
+    write(46,701) adjustl(trim(tmp))
+    write(tmp,'(i5.2)') initialVec1
+    801 FORMAT ("INITIALVEC=",A)
+    write(46,801) adjustl(trim(tmp))
 !call system ("sed -i.bak '/0.0000000000000000/d' ./eigenvalues.data")
 !call system ('python eigenvalues.py '//trim(tmp)) !plot energy spectrum
 !call system ('python dynamics.py '//trim(tmp)//trim(tmp1)) !plot dynamics
 
-
 endif
 
-
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!! FREE SPACE AND CLOSE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!! FREE SPACE AND CLOSE FILES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 if (output) then
     close(unit=40)
     close(unit=46)
 endif
-
 
 deallocate(H1)
 deallocate(H2)
@@ -710,11 +716,7 @@ deallocate(eigvals)
 deallocate(rwork)
 deallocate(work)
 
-
 end program
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!! SUBROUTINES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 

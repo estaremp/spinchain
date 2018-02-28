@@ -12,7 +12,7 @@ implicit none
 !!eigenvectors and eigenvalues as well as evolves it dynamically with a defined set of
 !!initial conditions. Properties such Fidelity, Entropy and Entanglement of Formation
 !!can be computed by using the relevant subroutines
-
+!a change
 !NOTES:
 ! *1* all the comments marked with (E.I.) indicate that the process has been done this way for the
 !     sake of efficiency of the program. I.e., due to the fact that we are working with wery large

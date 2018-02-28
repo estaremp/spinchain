@@ -33,7 +33,7 @@ $(bin):
 	mkdir -p $(bin)
 
 #Compile programs, first modules
-$(bin)/%.o: $(src)/%.f90 
+$(bin)/MAIN.o: $(src)/MAIN.f90 
 	@echo "|||Compiling Fortran||||"
 	$(f90comp) -c $(modules) -o $(src)/modules.o
 	$(f90comp) -c $^ -o $@
@@ -47,6 +47,6 @@ $(bin)/%.pyc: $(plot)/%.py
 clean:
 	@echo "|||Cleaning|||"
 	rm run
-	rm -f *.o
 	rm -f *.mod
+	rm -f $(src)/*.o
 #Endof Makefile

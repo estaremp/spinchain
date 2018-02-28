@@ -146,7 +146,7 @@ if (linear) then
     endif
 endif
 
-if (branched) then
+if (star) then
     if (branches==3) then
         if (MOD((N-1),3)/=0) then
             STOP 'ERROR: Triple branched networks need to have EVEN number of sites and (N-1) needs to be divisible by 3.'
@@ -298,55 +298,7 @@ norm=(1._dbl/sqrt(float(numI)))
 !!!! DEFINE CONNECTIVITY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-if (linear) then
-    len_branch = 0
-    hub = 0
-    con_lim1 = N
-    con_lim2 = 0
-    con_lim3 = 0
-endif
-
-!!!!TO BE GENERALIZED
-!
-!len_branch = ((2*(N - 1)/branches)+1)
-!do i=1,branches-1
-!    con_lim(i) = con_lim + 1
-
-
-!if (crossed_three) then
-!    len_branch = ((2*(N - 1)/3)+1)
-!    hub = ((len_branch-1)/2) + 1
-!    con_lim1 = len_branch
-!    con_lim2 = con_lim1 + 1
-!endif
-!
-!if (crossed_four) then
-!    len_branch = ((2*(N - 1)/4)+1)
-!    hub = ((len_branch-1)/2) + 1
-!    con_lim1 = len_branch
-!    con_lim2 = con_lim1 + 1
-!    con_lim3 = con_lim2 + (len_branch-2)
-!endif
-!
-!if (crossed_five) then
-!    len_branch = ((2*(N - 1)/5)+1)
-!    hub = ((len_branch-1)/2) + 1
-!    con_lim1 = len_branch
-!    con_lim2 = con_lim1 + 1
-!    con_lim3 = con_lim2 + (len_branch-2)
-!    con_lim4 = con_lim3 + (len_branch-2)
-!endif
-!
-!if (crossed_six) then
-!    len_branch = ((2*(N - 1)/6)+1)
-!    hub = ((len_branch-1)/2) + 1
-!    con_lim1 = len_branch
-!    con_lim2 = con_lim1 + 1
-!    con_lim3 = con_lim2 + (len_branch-2)
-!    con_lim4 = con_lim3 + (len_branch-2)
-!    con_lim5 = con_lim4 + (len_branch-2)
-!endif
-
+!call connectivity
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!! DEFINE COUPLING PATTERN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -373,8 +325,8 @@ allocate(hami(vectorstotal,vectorstotal))
 
 if (linear) then
     call build_hamiltonian_linear(HT,Js,N,vectorstotal,hami)
-else if (crossed) then
-    call build_hamiltonian_crosses(HT,Js,N,vectorstotal,hami,branches)
+else if (star) then
+    call build_hamiltonian_star(HT,Js,N,vectorstotal,hami,branches)
 endif
 
 !Stdout Hamiltonian
@@ -518,15 +470,6 @@ write(*,*) '>> Hamiltonian Diagonalization'
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 call injection_dynamics(HT,hami2,eigvals,vectorstotal,initialVec1,norm)
-
-!siteProb=0
-!do i=1,vectorstotal
-!    do k=1,N
-!        if (HT(i,k)==1) then
-!            siteProb(k) = siteProb(k) + fidelity(i)
-!        endif
-!    enddo
-!enddo
 
 write(*,*) '>> Dynamics'
 

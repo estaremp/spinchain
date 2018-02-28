@@ -12,6 +12,8 @@ make
 #Read variables to be used
 source 'graphical.data'
 
+mkdir output
+
 if [ $GRAPHICAL = 'T' ] ;
 then
     #Plot stuff
@@ -24,15 +26,14 @@ then
     python2 bin/dynamics.pyc $TOTALTIME $INITIALVEC
     python2 bin/exmap.pyc
 
-    mkdir output
     mkdir output/Plots
-    mv ./*.data ./*.out ./output
     mv ./*.png ./output/Plots
 fi
 
+mv ./*.data ./*.out ./output
+
 #Clean everything
 make clean
-rm -rf ./*.data
 rm -rf ./bin
 
 

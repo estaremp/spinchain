@@ -92,16 +92,16 @@ do while (time<=totalTime)
     enddo
 
     if (pst) then
-        write(44,*) time, fidelity
+        write(44,*) time*J_max, fidelity
+        write(45,*) time*J_max, siteProb
     else
-        write(44,*) time, fidelity
-        write(45,*) time, siteProb
+        write(44,*) time*J_max, fidelity
+        write(45,*) time*J_max, siteProb
     endif
 
     time = time + step_size
 
 enddo
-
 
 close(44)
 close(45)

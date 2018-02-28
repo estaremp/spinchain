@@ -32,7 +32,7 @@ integer, parameter :: N = 4            !Total number of sites
 integer, parameter :: exno = 1         !Total number of excitations
 
 integer, parameter :: numI = 1         !Total number of initial injected states
-integer, parameter :: initialVec1 = 2  !Initial state 1
+integer, parameter :: initialVec1 = 3  !Initial state 1
 integer, parameter :: initialVec2 = 0  !Initial state 2
 integer, parameter :: initialVec3 = 0  !Initial state 3
 integer, parameter :: initialVec4 = 0  !Initial state 4
@@ -66,16 +66,15 @@ real(kind=dbl), parameter :: totalTime = 100
 !***********************
 
 !*Define chain topology*!:
-logical, parameter :: linear = .true.
-logical, parameter :: branched = .false.
-logical, parameter :: crossed = .false.
+logical, parameter :: linear = .false.
+logical, parameter :: star = .true.
 logical, parameter :: lattice = .false.
 !logical, parameter :: crossed_three, crossed_four, crossed_five, crossed_six
 logical, parameter :: squared = .false.
 
 !*Define couplings scheme*!:
-logical, parameter :: uniform = .false.
-logical, parameter :: pst = .true.
+logical, parameter :: uniform = .true.
+logical, parameter :: pst = .false.
 logical, parameter :: ssh_a = .false.
 logical, parameter :: ssh_b = .false.
 logical, parameter :: abc = .false.
@@ -104,7 +103,7 @@ CONTAINS
     include 'BaseGenerator.f90'
     include 'Couplings.f90'
     include 'Hamiltonian_linear.f90'
-    include 'Hamiltonian_crosses.f90'
+    include 'Hamiltonian_star.f90'
     include 'Dynamics.f90'
 
 END MODULE

@@ -1,6 +1,4 @@
-# spinchain
-
-# Content
+# Content 
 * Generation of coupling scheme 
     * Uniform
     * Dimerised

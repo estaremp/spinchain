@@ -23,7 +23,7 @@ then
 
     python2 bin/probabilities.pyc $VECTORS
     python2 bin/eigenvalues.pyc $VECTORS
-    python2 bin/dynamics.pyc $TOTALTIME $INITIALVEC
+    python2 bin/dynamics.pyc $TOTALTIME $INITIALVEC $N
     python2 bin/exmap.pyc
 
     mkdir output/Plots

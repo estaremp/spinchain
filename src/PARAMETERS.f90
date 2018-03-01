@@ -5,11 +5,11 @@ use constants
 !*********************
 !!Initial parameters *
 !*********************
-integer, parameter :: N = 7            !Total number of sites
+integer, parameter :: N = 3            !Total number of sites
 integer, parameter :: exno = 1         !Total number of excitations
 
 integer, parameter :: numI = 1         !Total number of initial injected states
-integer, parameter :: initialVec1 = 5  !Initial state 1
+integer, parameter :: initialVec1 = 2  !Initial state 1
 integer, parameter :: initialVec2 = 0  !Initial state 2
 integer, parameter :: initialVec3 = 0  !Initial state 3
 integer, parameter :: initialVec4 = 0  !Initial state 4

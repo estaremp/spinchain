@@ -14,7 +14,6 @@
 !=========================================================================!
 recursive subroutine permutations(ex,nit,vec,N,Ninit,H,vectors,k)
 
-
 integer, intent(in) :: ex, nit, N, Ninit, vectors
 integer, dimension(N), intent(inout) :: vec
 integer, dimension(vectors,N), intent(inout) :: H

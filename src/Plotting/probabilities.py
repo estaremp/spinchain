@@ -24,6 +24,7 @@ ax.tick_params(axis='y', labelsize=20)
 ax.set_xlabel('|i>',fontsize=25)
 ax.plot(i,eigenstates)
 
+
 plt.title('Eigenstate Site-Probabilities')
 
 fig.set_tight_layout(True)

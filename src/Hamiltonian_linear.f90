@@ -22,8 +22,10 @@ use constants
 
 integer, intent(in) :: vectorstotal
 integer, intent(in) :: N
-real(kind=dbl), dimension(N), intent(in) :: Js
+
 integer, dimension(vectorstotal,vectorstotal), intent(in) :: HT
+
+real(kind=dbl), dimension(N), intent(in) :: Js
 real(kind=dbl), dimension(vectorstotal,vectorstotal), intent(inout) :: hami
 
 integer :: i,j,k

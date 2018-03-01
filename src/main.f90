@@ -76,9 +76,10 @@ complex(kind=dbl), allocatable, dimension(:) :: work
 integer, allocatable, dimension(:,:) :: H1,H2,H3,HT !Hilbert subspaces matrices
 
 real(kind=dbl), allocatable, dimension(:,:) :: hami, hami3 !Hamiltonian
+complex(kind=dbl), allocatable, dimension(:,:) :: red_rho
 
 complex(kind=dbl), allocatable, dimension(:,:) :: hami2 !other hamiltonians
-
+complex(kind=dbl), allocatable, dimension(:) :: c_i
 
 character :: a,b,c,d
 character(len=32) :: tmp,tmp1,tmp2
@@ -103,7 +104,7 @@ open (unit=40,file='spinchain.out',status='replace')
 write(40,101)
 write(40,102)
 write(40,101)
-write(40,*) '           © Marta P. Estarellas, 27/07/2016              '
+write(40,*) '           ï¿½ Marta P. Estarellas, 27/07/2016              '
 write(40,*) '                   University of York                     '
 write(40,103) values(3),values(2),values(1),values(5),values(6)
 write(40,104)
@@ -178,6 +179,10 @@ write(*,*) '>> Initial checks'
 !!!! DEFINING BASIS VECTORS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+!TODO - GENERALIZE
+!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 !Calculate number of vectors for each excitation N!/exno!(N-exno)! subspace and the total number
 !this is done progressively, sector by sector for sake of efficiency:
 
@@ -205,6 +210,7 @@ H3 = 0  !3ex subspace matrix
 !... keep adding matrices
 HT = 0  !total vectors
 
+!GENERALIZE THIS
 !Create the subsectors matrices through a recursive call to Permutations
 !First subsector (including ground state - all spins down):
 
@@ -245,6 +251,10 @@ HT(vectors1ex+vectors2ex+2:,:) = H3
 endif
 
 !**(NOTE: Add extra subsectors in the same fashion if needed)**
+
+!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+!
+!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 !Stdout vectors martix
 if (output) then
@@ -382,6 +392,7 @@ write(89,*) (hami(i,j),j=1,vectorstotal)
 enddo
 close(89)
 endif
+
 !call zheev('V','U',vectorstotal,hami2,size(hami2,1),eigvals,work,size(work,1),rwork,info)
 call zheevd('V','U',vectorstotal,hami2,size(hami2,1),eigvals,work,size(work,1),rwork,size(rwork,1),iwork,liwork,info)
 if(info/=0) stop 'ERROR in ZHEEV diagonalization'
@@ -389,28 +400,28 @@ if(info/=0) stop 'ERROR in ZHEEV diagonalization'
 
 !check normalisation eigenvectors
 do i=1,vectorstotal
-normal=0.
-do j=1,vectorstotal
-normal=normal+abs(hami2(i,j))**2
-enddo
-if (abs(1.-normal)>=error) then
-print*, 'ERROR: your eigenvectors are not well normalized'
-STOP
-endif
+    normal=0.
+    do j=1,vectorstotal
+        normal=normal+abs(hami2(i,j))**2
+    enddo
+    if (abs(1.-normal)>=error) then
+        print*, 'ERROR: your eigenvectors are not well normalized'
+        STOP
+    endif
 enddo
 
 !check eigenvectors orthogonality
 do v=1,vectorstotal
-do i=1,vectorstotal
-orto=0.
-do j=1,vectorstotal
-orto=orto+hami2(i,j)*hami2(v,j)
-enddo
-if ((orto>error).and.(v/=i)) then
-print*, 'ERROR: your eigenvectors are not orthogonal'
-STOP
-endif
-enddo
+    do i=1,vectorstotal
+        orto=0.
+        do j=1,vectorstotal
+            orto=orto+hami2(i,j)*hami2(v,j)
+        enddo
+        if ((orto>error).and.(v/=i)) then
+            print*, 'ERROR: your eigenvectors are not orthogonal'
+            STOP
+        endif
+    enddo
 enddo
 
 !!Stdout Eigenvalues
@@ -469,7 +480,11 @@ write(*,*) '>> Hamiltonian Diagonalization'
 !!!! DYNAMICS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-call injection_dynamics(HT,hami2,eigvals,vectorstotal,initialVec1,norm)
+allocate(c_i(vectorstotal))
+
+c_i=cmplx(0.0_dbl, 0.0_dbl, kind=dbl)
+
+call injection_dynamics(HT,hami2,eigvals,vectorstotal,initialVec1,norm,c_i)
 
 write(*,*) '>> Dynamics'
 
@@ -477,6 +492,19 @@ write(*,*) '>> Dynamics'
 !!!! ENTANGLEMENT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+allocate(red_rho(4,4))
+
+red_rho=cmplx(0.0_dbl, 0.0_dbl, kind=dbl)
+
+call reduced_density_matrix(HT,vectorstotal,red_rho,c_i)
+
+if (files) then
+open(unit=89,file='reduced_rho.data',status='unknown')
+do i=1,4
+write(89,*) (red_rho(i,j),j=1,4)
+enddo
+close(89)
+endif
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!! ENTROPY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -526,5 +554,7 @@ deallocate(hami2)
 deallocate(eigvals)
 deallocate(rwork)
 deallocate(work)
+deallocate(red_rho)
+deallocate(c_i)
 
 end program

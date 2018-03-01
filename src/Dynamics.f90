@@ -12,7 +12,7 @@
 ! Written by Marta Estarellas, v0.1, 31/03/2017                           !
 !=========================================================================!
 
-subroutine injection_dynamics(HT,hami,eigvals,vectorstotal,initialVec,norm)
+subroutine injection_dynamics(HT,hami,eigvals,vectorstotal,initialVec,norm,c_i)
 
 use constants
 use parameters
@@ -26,18 +26,18 @@ real(kind=dbl), intent(in) :: norm
 
 real(kind=dbl), dimension(vectorstotal), intent(in) :: eigvals
 complex(kind=dbl), dimension(vectorstotal,vectorstotal), intent(in) :: hami
+complex(kind=dbl), dimension(vectorstotal), intent(inout) :: c_i
 
 integer :: i,j,k
 
 real(kind=dbl) :: step_size, time
 real(kind=dbl), allocatable, dimension(:) :: fidelity
 real(kind=dbl), dimension(N) :: siteProb
-complex(kind=dbl), allocatable, dimension(:) :: a_m, c_i
+complex(kind=dbl), allocatable, dimension(:) :: a_m
 complex(kind=dbl), allocatable, dimension(:,:) :: Y_o, Y_t
 complex(kind=dbl) :: sum_vec
 
 allocate(a_m(vectorstotal))
-allocate(c_i(vectorstotal))
 allocate(fidelity(vectorstotal))
 allocate(Y_o(vectorstotal,vectorstotal))
 allocate(Y_t(vectorstotal,vectorstotal))
@@ -107,7 +107,6 @@ close(44)
 close(45)
 
 deallocate(a_m)
-deallocate(c_i)
 deallocate(Y_o)
 deallocate(Y_t)
 

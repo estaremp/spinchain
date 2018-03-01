@@ -1,6 +1,9 @@
 Abstract and general info
 
 # Content 
+* Schrodinger equation 
+    * Integration method **(TBI)**
+    * Diagonalization method 
 * Generation of coupling scheme 
     * Uniform
     * Dimerised

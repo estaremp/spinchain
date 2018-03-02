@@ -22,6 +22,7 @@ Pycomp = python2
 libs = -llapack -lblas
 
 #flags
+nowarn = -w
 flags = -g -Wall -pedantic -fbounds-check  -Wtabs -fbacktrace -ffpe-trap=invalid,zero,overflow
 
 #Compile fortran first create bin, then execute
@@ -47,13 +48,13 @@ $(bin)/main.o: $(src)/main.f90
 	@echo "***********************"
 	@echo "|||Compiling Modules||||"
 	@echo "***********************"
-	$(f90comp) -c $(const) -o $(bin)/c.o
-	$(f90comp) -c $(param) -o $(bin)/p.o
-	$(f90comp) -c $(depen) -o $(bin)/d.o
+	$(f90comp) -c $(nowarn) $(const) -o $(bin)/c.o
+	$(f90comp) -c $(nowarn) $(param) -o $(bin)/p.o
+	$(f90comp) -c $(nowarn) $(depen) -o $(bin)/d.o
 	@echo "***********************"
 	@echo "|||Compiling Main||||"
 	@echo "***********************"
-	$(f90comp) -c $^ -o $@
+	$(f90comp) -c $(nowarn) $^ -o $@
 	
 #Compile python plots
 $(bin)/%.pyc: $(plot)/%.py

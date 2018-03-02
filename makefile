@@ -21,6 +21,9 @@ Pycomp = python2
 #Libraries
 libs = -llapack -lblas
 
+#flags
+flags = -g -Wall -pedantic -fbounds-check  -Wtabs -fbacktrace -ffpe-trap=invalid,zero,overflow
+
 #Compile fortran first create bin, then execute
 running: $(bin) | exec 
 

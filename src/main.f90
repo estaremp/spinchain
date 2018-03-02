@@ -179,14 +179,14 @@ write(*,*) '>> Initial checks'
 !this is done progressively, sector by sector for sake of efficiency:
 
 if (exno==1) then
-vectorstotal = vectors1ex+1
+    vectorstotal = vectors1ex+1
 else if (exno==2) then
-vectors2ex = (N*(N-1)/2)
-vectorstotal = vectors1ex+vectors2ex+1
+    vectors2ex = (N*(N-1)/2)
+    vectorstotal = vectors1ex+vectors2ex+1
 else if (exno==3) then
-vectors2ex = (N*(N-1)/2)
-vectors3ex = (N*(N-1)*(N-2)/6)
-vectorstotal = vectors1ex+vectors2ex+vectors3ex+1
+    vectors2ex = (N*(N-1)/2)
+    vectors3ex = (N*(N-1)*(N-2)/6)
+    vectorstotal = vectors1ex+vectors2ex+vectors3ex+1
 end if
 
 !Allocate matrices that will contain all the vectors:
@@ -413,7 +413,6 @@ if (output) then
     !Eigenvalues
     write(40,FMT=202) 'EIGENVALUES:'
         do i=1,vectorstotal
-            if (eigvals(i)==0._dbl) cycle
             write(40,*) eigvals(i)
         enddo
 

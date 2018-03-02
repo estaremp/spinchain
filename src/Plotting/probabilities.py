@@ -30,4 +30,4 @@ ax.plot(eigen)
 fig.tight_layout()
 
 #SAVE FIGURE IN A PNG FILE
-savefig('eigenstates.png',transparent=True)
+savefig('eigenstates.png',transparent=False)

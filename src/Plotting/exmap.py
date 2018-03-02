@@ -35,7 +35,7 @@ def Colormap(lst):
     ax.set_ylabel('spin',fontsize=20)
     yticks = ax.yaxis.get_major_ticks()
     yticks[0].set_visible(False)
-    plt.savefig('exmap.png',transparent=True)
+    plt.savefig('exmap.png',transparent=False)
 
 
 Colormap(data[:,1:])

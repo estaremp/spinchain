@@ -120,5 +120,5 @@ ax2.tick_params(axis='y', labelsize=20)
 plt.tight_layout()
 
 #SAVE FIGURE AS A PNG FILE
-plt.savefig('eigenvalues.png',transparent=True)
+plt.savefig('eigenvalues.png',transparent=False)
 

@@ -29,7 +29,7 @@ running: $(bin) | exec
 
 #Execute procedure, first compile programs then plots
 exec: $(main) | $(plots)
-	$(f90comp) $(libs) $(src)/c.o $(src)/p.o $(src)/d.o $(main) -o run
+	$(f90comp) $(src)/c.o $(src)/p.o $(src)/d.o $(main) -o run $(libs)
 	@echo "***********************"
 	@echo "||||Build succesful||||"
 	@echo "***********************"

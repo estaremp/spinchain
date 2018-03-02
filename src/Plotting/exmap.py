@@ -1,41 +1,47 @@
-import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.ticker import FormatStrFormatter
+from pylab import *
 
-
-
+#LOAD DATA FILES
 data = np.loadtxt('exmap.data')
 
+#SET SIZE FIGURE
+plt.figure(figsize=(10,7))
 
-def Colormap(lst):
-    
-    fig, ax = plt.subplots(figsize=(20,7))
-    
-    intensity = np.array(lst)
+ax = plt.subplot()
+
+def Colormap(ax,lst):
+
+    #STRUCTURE DATA FOR COLORMAP
+    intensity = np.array(lst[:,1:])
     
     x, y = intensity.shape
     
-    x1 = range(x) # changed this also
-    y1 = range(y+1) # changed this also
-    
+    x1 = lst[:,0]
+    y1 = range(0,y+1)
     x2,y2 = np.meshgrid(x1,y1)
     
+    #COLORMAP
+    mappable = plt.pcolormesh(x2,y2,np.swapaxes(intensity,0,1),cmap='rainbow',vmin=0,vmax=1)
+    c = colorbar(mappable)
+    c.ax.tick_params(labelsize=20)
 
-    plt.pcolormesh(x2,y2,np.swapaxes(intensity,0,1),cmap='rainbow',vmin=0,vmax=1) # Transpose of intensity
-    #plt.imshow(lst[x2,y2], cmap='RdBu', vmin=0, vmax=1,
-    #           extent=[x2.min(), x2.max(), y2.min(), y2.max()],
-    #           interpolation='nearest', origin='lower')
-    plt.colorbar()
-    labels_x = []
+    #SET X-AXIS TICKS AND LABEL
+    ax.set_xlabel('$\mathrm{time \cdot J_{max}}$',fontsize=20)
+    ax.tick_params(axis='y', labelsize=20)
+    ax.tick_params(axis='x', labelsize=20)
     
-    for i in range(0,len(data[0,1:])+1,1):
-        labels_x.append('%.2E'%(i*(data[-1,0])/len(data[0,1:])))
-    ax.set_xticklabels(labels_x)
-    ax.set_xlabel('time $\Delta$',fontsize=20)
-    ax.set_ylabel('spin',fontsize=20)
-    yticks = ax.yaxis.get_major_ticks()
-    yticks[0].set_visible(False)
-    plt.savefig('exmap.png',transparent=False)
+    #SET X-AXIS TICKS AND LABEL
+    ax.set_ylim([0,y])
+    start, end = ax.get_ylim()
+    ax.yaxis.set_ticks(np.arange(0.5, end+0.5, 1))
+    labels = [item.get_text() for item in ax.get_yticklabels()]
+    i = 0
+    while (i<(len(data[0,1:]))):
+        labels[i]='spin'+str(i+1)
+        i=i+1
+    ax.set_yticklabels(labels,fontsize=20)
 
+Colormap(ax,data)
+#SAVE FIG
+savefig('exmap.png',transparent=False)
 
-Colormap(data[:,1:])

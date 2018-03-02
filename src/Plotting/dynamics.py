@@ -31,7 +31,7 @@ ax1.tick_params(axis='y', labelsize=20)
 ax1.tick_params(axis='x', labelsize=20)
 
 #SET LABEL NAMES
-plt.xlabel('$\mathrm{time \cdot J}$',fontsize=25,color='black')
+plt.xlabel('$\mathrm{time \cdot J_{max}}$',fontsize=25,color='black')
 plt.ylabel('${\cal{F}}(t)$',fontsize=25,color='black')
 
 #LEGEND

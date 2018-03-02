@@ -8,7 +8,7 @@ plot = src/Plotting
 bin = bin
 
 #Define variables
-main = $(bin)/MAIN.o  
+main = $(bin)/main.o  
 const = $(src)/CONSTANTS.f90
 param = $(src)/PARAMETERS.f90
 depen = $(src)/DEPENDENCIES.f90
@@ -43,7 +43,7 @@ $(bin):
 	mkdir -p $(bin)
 
 #Compile programs, first modules
-$(bin)/MAIN.o: $(src)/MAIN.f90 
+$(bin)/main.o: $(src)/main.f90 
 	@echo "***********************"
 	@echo "|||Compiling Modules||||"
 	@echo "***********************"

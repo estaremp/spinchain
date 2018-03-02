@@ -24,42 +24,28 @@ implicit none
 !***************************************************!
 
 !integers
-integer :: i,j,k,l,m,t,v,w   !loop dummies
-integer :: ii,jj,kk,ll,mm    !more loop dummies
-integer :: prev,next,last    !more fancy loop dummies
+integer :: i,j,k,v   !loop dummies
 integer :: nit,Ninit,ex      !subroutine Permutations variables
-integer :: len_branch
-integer :: con_lim1
-integer :: con_lim2
-integer :: con_lim3
-integer :: con_lim4
-integer :: con_lim5
-integer :: hub
-integer :: hub_prima
-integer :: hub_semi
+
 integer :: vectors1ex = N       !Initially set to N, reallocate later if needed (E.I.)
 integer :: vectors2ex = N       !Initially set to N, reallocate later if needed (E.I.)
 integer :: vectors3ex = N       !Initially set to N, reallocate later if needed (E.I.)
 integer :: vectorstotal         !Sum of all the vectors
-integer :: info, lwork, liwork  !Info in lapack subroutines
+integer :: info, liwork  !Info in lapack subroutines
 
 integer,dimension(8) :: values !array with date
-integer, dimension(N) :: vec, test
-integer, dimension(N+1) :: array
+integer, dimension(N) :: vec
 integer, allocatable, dimension (:) :: iwork
 
 integer, allocatable, dimension(:,:) :: H1,H2,H3,HT !Hilbert subspaces matrices
 
 !floats
 real(kind=dbl) :: norm,normal,orto !normaliztion constant
-real(kind=dbl) :: fidelity_e,prob  !fidelity
 
 real(kind=dbl), dimension(N) :: Js = 0.0_dbl
-real(kind=dbl), dimension(N) :: siteProb = 0.0_dbl
 
 real(kind=dbl), allocatable, dimension(:) :: eigvals
 real(kind=dbl), allocatable, dimension(:) :: rwork
-real(kind=dbl), allocatable, dimension(:) :: fidelity
 
 !complex
 complex(kind=dbl), allocatable, dimension(:) :: work
@@ -72,10 +58,9 @@ complex(kind=dbl), allocatable, dimension(:,:) :: hamiD !diagonalized Hamiltonia
 real(kind=dbl), allocatable, dimension(:,:) :: hami !Hamiltonian
 
 !strings
-character :: a,b,c,d
-character(len=32) :: tmp,tmp1,tmp2
-character(len=500) :: fmt1,fmt2,fmt3,fmt4 !format descriptors
-character(len=32) :: class, subclass
+character :: a
+character(len=32) :: tmp
+character(len=500) :: fmt1,fmt2 !format descriptors
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -245,10 +230,8 @@ endif
 
 !Stdout vectors martix
 if (output) then
-    201 FORMAT ('|',I2,'> -->' I2)
-    202 FORMAT (/A)
-    203 FORMAT (/)
-    write(40,FMT=202) 'BASIS VECTORS:'
+    201 FORMAT (/A)
+    write(40,FMT=201) 'BASIS VECTORS:'
     do i=1,vectorstotal
         write(40,*) i,'-->',(HT(i,j),j=1,N)
     enddo
@@ -282,7 +265,7 @@ call couplings(Js)
 !Stdout coupling pattern
 301 FORMAT ("(spin",I3,")-(spin",I3,") -->",F6.2)
 if (output) then
-    write(40,FMT=202) 'COUPLING PATTERN:'
+    write(40,FMT=201) 'COUPLING PATTERN:'
     do i=1,N-1
         write(40,FMT=301) i, i+1, Js(i)
     enddo
@@ -304,7 +287,7 @@ endif
 
 !Stdout Hamiltonian
 if (output) then
-    write(40,FMT=202) 'HAMILTONIAN MATRIX:'
+    write(40,FMT=201) 'HAMILTONIAN MATRIX:'
     do i=1,vectorstotal
         write(40,*) (hami(i,j),j=1,vectorstotal)
     enddo
@@ -383,7 +366,7 @@ do v=1,vectorstotal
     do i=1,vectorstotal
         orto=0.
         do j=1,vectorstotal
-            orto=orto+hamiD(i,j)*hamiD(v,j)
+            orto=orto+real(hamiD(i,j)*dconjg(hamiD(v,j)))
         enddo
         if ((orto>error).and.(v/=i)) then
             print*, 'ERROR: your eigenvectors are not orthogonal'
@@ -408,13 +391,13 @@ if (output) then
     fmt2=trim(fmt2)//")"
 
     !Eigenvalues
-    write(40,FMT=202) 'EIGENVALUES:'
+    write(40,FMT=201) 'EIGENVALUES:'
         do i=1,vectorstotal
             write(40,*) eigvals(i)
         enddo
 
     !Eigenvectors
-    write(40,FMT=202) 'EIGENVECTORS'
+    write(40,FMT=201) 'EIGENVECTORS'
 
     write(40,fmt2)
     do i=1,vectorstotal

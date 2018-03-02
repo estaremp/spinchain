@@ -29,7 +29,7 @@ running: $(bin) | exec
 
 #Execute procedure, first compile programs then plots
 exec: $(main) | $(plots)
-	$(f90comp) $(src)/c.o $(src)/p.o $(src)/d.o $(main) -o run $(libs)
+	$(f90comp) $(bin)/c.o $(bin)/p.o $(bin)/d.o $(main) -o run $(libs)
 	@echo "***********************"
 	@echo "||||Build succesful||||"
 	@echo "***********************"
@@ -47,9 +47,9 @@ $(bin)/main.o: $(src)/main.f90
 	@echo "***********************"
 	@echo "|||Compiling Modules||||"
 	@echo "***********************"
-	$(f90comp) -c $(const) -o $(src)/c.o
-	$(f90comp) -c $(param) -o $(src)/p.o
-	$(f90comp) -c $(depen) -o $(src)/d.o
+	$(f90comp) -c $(const) -o $(bin)/c.o
+	$(f90comp) -c $(param) -o $(bin)/p.o
+	$(f90comp) -c $(depen) -o $(bin)/d.o
 	@echo "***********************"
 	@echo "|||Compiling Main||||"
 	@echo "***********************"

@@ -17,10 +17,7 @@ implicit none
 !a change
 
 !NOTES:
-! *1* all the comments marked with (E.I.) indicate that the process has been done this way for the
-!     sake of efficiency of the program. I.e., due to the fact that we are working with wery large
-!     Hilbert spaces, the subspaces and the factorials are calculated progressively in dependence
-!     of the initial needs
+
 
 !***************************************************!
 !******************  VARIABLES *********************!

@@ -5,7 +5,7 @@ use constants
 !*********************
 !!Initial parameters *
 !*********************
-integer, parameter :: N = 3            !Total number of sites
+integer, parameter :: N = 10            !Total number of sites
 integer, parameter :: exno = 1         !Total number of excitations
 
 integer, parameter :: numI = 1         !Total number of initial injected states
@@ -59,10 +59,10 @@ logical, parameter :: squared = .false.
 !*Define couplings scheme*!:
 !* Check one *!
 logical, parameter :: uniform = .false.
-logical, parameter :: pst = .false.
+logical, parameter :: pst = .true.
 logical, parameter :: ssh_a = .false.
 logical, parameter :: ssh_b = .false.
-logical, parameter :: abc = .true.
+logical, parameter :: abc = .false.
 logical, parameter :: kitaev = .false.
 
 !*Define presence of disorder*!:

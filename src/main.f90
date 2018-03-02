@@ -438,6 +438,7 @@ if (files) then
     do i=1,vectorstotal
         write(41,*) real(hamiD(i,:))
         write(42,*) (abs(dconjg(hamiD(i,:))*(hamiD(i,:))))
+        if (eigvals(i)==0._dbl) cycle
         write(43,*) eigvals(i)
     enddo
 

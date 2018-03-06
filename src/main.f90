@@ -543,10 +543,6 @@ endif
     !Writes in a file data needed for plots
     open(unit=46,file='info.data',status='unknown')
 
-    if (num_realisations>0) then
-        graphical=.false.
-    endif
-
     401 FORMAT ("GRAPHICAL=",L)
     write(46,401) graphical
 

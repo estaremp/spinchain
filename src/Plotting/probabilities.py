@@ -24,6 +24,9 @@ ax.set_xlabel('site number, $i$',fontsize=25)
 ax.tick_params(axis='x', labelsize=20)
 ax.tick_params(axis='y', labelsize=20)
 
+#SET X TICKS TO BE INTEGERS
+ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+
 #PLOT
 ax.plot(eigen)
 

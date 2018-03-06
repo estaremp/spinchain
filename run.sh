@@ -14,6 +14,8 @@ source 'info.data'
 #Create output directory
 mkdir output
 
+mv src/Plotting/*.pyc ./bin
+
 #Realisations if noise
 if [ $REALISATIONS -ne 0 ] ;
 then
@@ -24,6 +26,15 @@ then
         ./run
         cat eigenvalues.data >> eigenvalues_realisations.data
     done
+
+    python2 python_scripts/averages.py eigenvalues_realisations.data $VECTORS
+
+    if [ $GRAPHICAL = 'T' ] ;
+    then
+    #Plot averaged
+    python2 bin/averagedEigenvalues.pyc $VECTORS
+    fi
+
 fi
 
 #Graphical outputs (not done if realisations)
@@ -32,13 +43,16 @@ then
     #Plot stuff
     echo ' >> Plot'
 
-    mv src/Plotting/*.pyc ./bin
-
     python2 bin/probabilities.pyc $VECTORS
     python2 bin/eigenvalues.pyc $VECTORS
     python2 bin/dynamics.pyc $TOTALTIME $INITIALVEC $N
     python2 bin/exmap.pyc
 
+fi
+
+#If Plots have been created move them to the required folder
+if [ $GRAPHICAL = 'T' ] || [ $REALISATIONS -ne 0 ] ;
+then
     mkdir output/Plots
     mv ./*.png ./output/Plots
 fi

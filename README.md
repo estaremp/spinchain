@@ -15,8 +15,8 @@ Abstract and general info
     * Star networks
     * Lattices **(TBI)**
 * Adding errors
-    * Diagonal random disorder **(TBI)**
-    * Off diagonal random disorder **(TBI)**
+    * Diagonal random disorder 
+    * Off diagonal random disorder 
     * Injection time delays **(TBI)**
 * Diagonalization of the Hamiltonian
     * Eigenvectors and Eigenenergies

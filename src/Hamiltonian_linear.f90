@@ -32,7 +32,6 @@ integer :: i,j,k
 integer :: l,ll,m
 integer, dimension(N) :: test
 
-hami=0.0_dbl
 do i=1,vectorstotal
     do j=1,vectorstotal
         l=0

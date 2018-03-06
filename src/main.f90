@@ -1,3 +1,15 @@
+module noisemod
+
+integer, parameter :: dubp=kind(1.0d0)
+
+! For random numbers
+integer, parameter :: bit_32=kind(4)
+integer(bit_32) :: ix,iy
+
+real(dubp) :: Noise_SDev=0.5_dubp ! For Normal distribution
+
+end module
+
 program spinchain
 
 !!load subroutines
@@ -6,6 +18,8 @@ use dependencies
 use constants
 !!load initial parameters
 use parameters
+
+use noisemod
 
 implicit none
 
@@ -24,8 +38,9 @@ implicit none
 !***************************************************!
 
 !integers
-integer :: i,j,k,v   !loop dummies
+integer :: i,j,k,v,w   !loop dummies
 integer :: nit,Ninit,ex      !subroutine Permutations variables
+integer :: seed
 
 integer :: vectors1ex = N       !Initially set to N, reallocate later if needed (E.I.)
 integer :: vectors2ex = N       !Initially set to N, reallocate later if needed (E.I.)
@@ -41,11 +56,14 @@ integer, allocatable, dimension(:,:) :: H1,H2,H3,HT !Hilbert subspaces matrices
 
 !floats
 real(kind=dbl) :: norm,normal,orto !normaliztion constant
+real(kind=dbl) :: r !random number
 
-real(kind=dbl), dimension(N) :: Js = 0.0_dbl
+real(kind=dbl), dimension(N-1) :: Js = 0.0_dbl
 
 real(kind=dbl), allocatable, dimension(:) :: eigvals
 real(kind=dbl), allocatable, dimension(:) :: rwork
+
+real(kind=dbl), allocatable, dimension(:) :: Noise
 
 !complex
 complex(kind=dbl), allocatable, dimension(:) :: work
@@ -61,6 +79,9 @@ real(kind=dbl), allocatable, dimension(:,:) :: hami !Hamiltonian
 character :: a
 character(len=32) :: tmp
 character(len=500) :: fmt1,fmt2 !format descriptors
+
+!random number generator
+real(dubp), external :: algor_uniform_random
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -78,7 +99,7 @@ open (unit=40,file='spinchain.out',status='replace')
 write(40,101)
 write(40,102)
 write(40,101)
-write(40,*) '           � Marta P. Estarellas, 27/07/2016              '
+write(40,*) '           © Marta P. Estarellas, 27/07/2016              '
 write(40,*) '                   University of York                     '
 write(40,103) values(3),values(2),values(1),values(5),values(6)
 write(40,104)
@@ -273,12 +294,28 @@ endif
 
 write(*,*) '>> Coupling pattern defined'
 
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!! ADD PERTURBATION FACTORS TO THE COUPLINGS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+seed = 0
+call noise_sub1 (seed)
+
+if (random_J) then
+    do i=1,N-1
+        r=algor_uniform_random()
+        Js(i)=Js(i)+(r*E_J*J_max)
+    enddo
+endif
+
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!! BUILD HAMILTONIAN IN THE SPIN BASIS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 allocate(hami(vectorstotal,vectorstotal))
 
+hami=0.0_dbl
 if (linear) then
     call build_hamiltonian_linear(HT,Js,N,vectorstotal,hami)
 else if (star) then
@@ -296,14 +333,39 @@ endif
 write(*,*) '>> Hamiltonian Build'
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!! ADD PERTURBATION FACTORS TO THE DIAGONAL !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+allocate(Noise(vectorstotal))
+
+Noise(i)=0
+if (random_D) then
+    do i=2,vectorstotal
+    w = 0
+        do j=1,N
+            if (HT(i,j).eq.1) then
+                w=w+1 !w counts the number of excitations in a vector
+            endif
+        enddo
+
+    if (w.eq.1) then
+        r=algor_uniform_random()
+        Noise(i)=(E_D*r*J_max)
+    else
+        do j=2,N+1
+            do k=1,N
+                if ((HT(i,k).eq.1).and.(HT(i,k).eq.HT(j,k))) then
+                    Noise(i)=Noise(i)+Noise(j)
+                endif
+            enddo
+        enddo
+    endif
+    hami(i,i) = hami(i,i) + Noise(i)
+    enddo
+endif
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!! TRANSLATE THE HAMILTONIAN IN THE MJ BASIS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!! ADD PERTURBATION FACTORS TO THE HAMILTONIAN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -320,7 +382,6 @@ allocate(work((vectorstotal**2)+2*vectorstotal))
 liwork=5*vectorstotal+3
 
 allocate(iwork(liwork))
-
 
 hamiD=cmplx(0.0_dbl, 0.0_dbl, kind=dbl)
 do i=1,vectorstotal
@@ -381,28 +442,37 @@ if (output) then
     !set formats
     write(tmp,'(i3.1)') vectorstotal
     fmt1='(1X,i3.1,1X,'//tmp//'("(",f7.3,f7.3,")"))'
+
+    !print the headins
+    !if N is small,
+    !otherwise the
+    !file gets too
+    !messy
+    if (N.le.20) then
     fmt2='(6X,'
+        do i=1,vectorstotal
+            write(tmp,'(i3.1)') i
+            fmt2=trim(fmt2)//'"Eigenvector'//trim(adjustl(tmp))//':",3X,'
+        enddo
 
-    do i=1,vectorstotal
-        write(tmp,'(i3.1)') i
-        fmt2=trim(fmt2)//'"Eigenvector'//trim(adjustl(tmp))//':",3X,'
-    enddo
+        fmt2=trim(fmt2)//")"
+    endif
 
-    fmt2=trim(fmt2)//")"
-
-    !Eigenvalues
-    write(40,FMT=201) 'EIGENVALUES:'
+        !Eigenvalues
+        write(40,FMT=201) 'EIGENVALUES:'
         do i=1,vectorstotal
             write(40,*) eigvals(i)
         enddo
 
-    !Eigenvectors
-    write(40,FMT=201) 'EIGENVECTORS'
+        !Eigenvectors
+        write(40,FMT=201) 'EIGENVECTORS'
 
-    write(40,fmt2)
-    do i=1,vectorstotal
-        write(40,fmt1) i ,(hamiD(i,:))
-    enddo
+        if (N.le.20) then
+        write(40,fmt2)
+        endif
+        do i=1,vectorstotal
+            write(40,fmt1) i ,(hamiD(i,:))
+        enddo
 
 endif
 
@@ -469,28 +539,36 @@ endif
 !!!! PLOTTING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-!Graphics
-if (graphical) then
 
     !Writes in a file data needed for plots
-    open(unit=46,file='graphical.data',status='unknown')
+    open(unit=46,file='info.data',status='unknown')
+
+    if (num_realisations>0) then
+        graphical=.false.
+    endif
+
+    401 FORMAT ("GRAPHICAL=",L)
+    write(46,401) graphical
+
+    501 FORMAT ("REALISATIONS=",A)
+    write(tmp,'(i5.4)') num_realisations
+    write(46,501) adjustl(trim(tmp))
+
+    601 FORMAT ("N=",A)
     write(tmp,'(i5.4)') N
-    401 FORMAT ("N=",A)
-    write(46,401) adjustl(trim(tmp))
-    write(tmp,'(i5.2)') vectorstotal
-    501 FORMAT ("GRAPHICAL=",A)
-    write(46,501) "T"
-    write(tmp,'(i5.2)') vectorstotal
-    601 FORMAT ("VECTORS=",A)
     write(46,601) adjustl(trim(tmp))
-    write(tmp,'(f6.2)') totaltime
-    701 FORMAT ("TOTALTIME=",A)
+
+    701 FORMAT ("VECTORS=",A)
+    write(tmp,'(i5.4)') vectorstotal
     write(46,701) adjustl(trim(tmp))
-    write(tmp,'(i5.2)') initialVec1
-    801 FORMAT ("INITIALVEC=",A)
+
+    801 FORMAT ("TOTALTIME=",A)
+    write(tmp,'(f6.2)') totaltime
     write(46,801) adjustl(trim(tmp))
 
-endif
+    901 FORMAT ("INITIALVEC=",A)
+    write(tmp,'(i5.2)') initialVec1
+    write(46,901) adjustl(trim(tmp))
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!! FREE SPACE AND CLOSE FILES AND CLEAN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -516,5 +594,107 @@ deallocate(rwork)
 deallocate(work)
 deallocate(red_rho)
 deallocate(c_i)
+deallocate(Noise)
 
-end program
+end program
+
+!*********************TO BE REPROGRAMED**********************!
+
+subroutine noise_sub1 (seed)
+
+use noisemod
+implicit none
+integer :: seed             !may or may not be 32 bit...
+!32 bit integer version of seed
+integer(kind=bit_32) :: iseed              !random number seed
+
+!f90 intrinsic time call
+character(len=10) :: system_time           !length is crucial ...
+real (kind=dubp)    :: rtime
+
+if (bit_size(iseed)/=32) call io_abort('Error in algor_set_random_seed - 32-bit integer kind type problem')
+
+if (seed == 0 ) then
+call date_and_time(time=system_time)  !character string hhmmss.xxx
+read (system_time,*) rtime            !convert to real
+rtime = rtime * 1000.0_dubp             !0<rtime<235959999.0 which fits within huge(1)
+else
+rtime = real(abs(seed),kind=dubp)          !convert seed to real
+end if
+
+!and then convert to bit_32 size integer
+iseed = int(rtime,kind=bit_32)              !must fit within huge(1)
+
+ix=ieor(777755555_bit_32,iseed)                   !Marsaglia generator
+iy=ior(ieor(888889999_bit_32,iseed),1_bit_32)     !Parks-Miller generator
+
+seed = int(rtime)                                 !return the seed that was used in default integer
+
+
+return
+end subroutine noise_sub1
+
+function algor_uniform_random()
+!=========================================================================!
+! Return a single random deviate ~ uniform [0,1] or [-1,1] or [-0.5,0.5]  !
+! Based on Park-Miller "minimal standard" generator with Schrage's method !
+!  to do 32-bit multiplication without requiring higher precision, plus   !
+!  additional Marsaglia shift to suppress any weaknesses & correlations.  !
+! Using two independent methods greatly increases the period of the       !
+!  generator, s.t. resulting period ~2*10^18                              !
+! NB Routine is only set to work with 32 bit integers!                    !
+!-------------------------------------------------------------------------!
+! References:                                                             !
+!   S.K. Park and K.W. Miller, Commun. ACM, 31, p1192-1201 (1988)         !
+!   L. Schrage, ACM Trans. Math. Soft., 5, p132-138 (1979)                !
+!   G. Marsaglia, Linear Algebra and its Applications, 67, p147-156 (1985)!
+!-------------------------------------------------------------------------!
+! Return value:                                                           !
+!   algor_uniform_random => required random deviate                       !
+!-------------------------------------------------------------------------!
+! Parent module variables used:                                           !
+!   ix as next 32-bit integer in Marsaglia generator (updated)            !
+!   iy as next 32-bit integer in Park-Miller generator (updated)          !
+!-------------------------------------------------------------------------!
+! Written by Matt Probert, v0.1, 01/07/2000                               !
+!=========================================================================!
+use noisemod
+implicit none
+real(kind=dubp)                 :: algor_uniform_random
+
+!NB We use 3 logical XOR operations to do Marsaglia shift
+!=> hard-wire 3 shift values (not all triplets any good)
+!=> entire routine preset to only work with 32 bit integers.
+
+!local variables ...
+integer(kind=bit_32)            :: iy_tmp       !working value to force integer division
+integer(kind=bit_32), parameter :: iy_max=2147483647 !2^31-1
+real(kind=dubp), parameter        :: inv_iy_max=1.0_dubp/2147483647.0_dubp
+real(kind=dubp)                   :: notright
+
+!do Marsaglia shift sequence, period 2^32-1, to get new ix
+ix=ieor(ix,ishft(ix, 13_bit_32))
+ix=ieor(ix,ishft(ix,-17_bit_32))
+ix=ieor(ix,ishft(ix,  5_bit_32))
+
+!Park-Miller sequence, period iy_max-1, to get new iy
+iy_tmp=iy/127773_bit_32                         !NB integer division
+iy=16807_bit_32*(iy-iy_tmp*127773_bit_32)-iy_tmp*2836_bit_32  !next value of iy
+if (iy < 0_bit_32) iy=iy+iy_max                 !integer modulo iy_max
+
+!Combine ix and iy to get new random number, rescale onto range [0,1]
+notright=inv_iy_max*ior(iand(iy_max,ieor(ix,iy)),1_bit_32)       !with masking to ensure non-zero
+
+!Between -1 to 1
+!algor_uniform_random=(notright*2.0_dubp)-1_dubp when {0-1}: !notright
+
+!Between -0.5 and 0.5
+algor_uniform_random=(notright*1.0_dubp)-0.5_dubp!notright
+
+!Between 0 and 1
+!algor_uniform_random=notright
+
+return
+end function algor_uniform_random
+
+!**********************************************************************************!

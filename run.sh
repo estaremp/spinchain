@@ -6,14 +6,27 @@ rm -rf output
 #Compile files
 make
 
-#Run executable
 ./run
 
 #Read variables to be used
-source 'graphical.data'
+source 'info.data'
 
+#Create output directory
 mkdir output
 
+#Realisations if noise
+if [ $REALISATIONS -ne 0 ] ;
+then
+    for j in `seq 1 1 $REALISATIONS`
+    do
+        echo 'Realisation num:' $j
+        #Run executable
+        ./run
+        cat eigenvalues.data >> eigenvalues_realisations.data
+    done
+fi
+
+#Graphical outputs (not done if realisations)
 if [ $GRAPHICAL = 'T' ] ;
 then
     #Plot stuff

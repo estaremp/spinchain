@@ -4,6 +4,8 @@ It also allows for the addition of static perturbations and time delays between 
 
 Plots created through python (matplotlib) scripts are also generated upon request. 
 
+See https://github.com/estaremp/spinchain/wiki for more info.
+
 # Content 
 * Schrodinger equation 
     * Integration method **(TBI)**

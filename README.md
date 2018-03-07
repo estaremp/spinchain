@@ -1,4 +1,10 @@
-Abstract and general info
+This code solves the Schrodinger equation of a set of interacting qubits in a system defined under the XY Heisenberg Hamiltonian. The dynamics of the system is obtained by evolving the eigenstates (obtained from direct diagonalization of the Hamiltonian) and other parameters such as Fidelity or Entanglement of Formation are computed.
+
+It also allows for the addition of static perturbations and time delays between injections. It computes several disorder realisations and outputs the average of the resultant parameters. 
+
+Plots created through python (matplotlib) scripts are also generated upon request. 
+
+See https://github.com/estaremp/spinchain/wiki for more info.
 
 # Content 
 * Schrodinger equation 

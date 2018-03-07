@@ -64,6 +64,7 @@ integer, parameter :: num_realisations = 10
 real(kind=dbl), parameter :: E_J = 1.0_dbl !scale of the disorder on the couplings
 real(kind=dbl), parameter :: E_D = 0.1_dbl !scale of the disorder on the sites
 
+real(kind=dbl), parameter :: error=0.000001_dbl
 !**********************
 !!Dynamics parameters *
 !**********************

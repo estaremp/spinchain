@@ -23,7 +23,7 @@ logical, parameter :: abc = .false.
 logical, parameter :: kitaev = .false.
 
 !*Define presence of disorder*!:
-logical, parameter :: random_J = .true. !Off-diagonal disorder
+logical, parameter :: random_J = .false. !Off-diagonal disorder
 logical, parameter :: random_D = .false. !Diagonal disorder
 
 !*Manage files*!:

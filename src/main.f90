@@ -338,7 +338,7 @@ write(*,*) '>> Hamiltonian Build'
 
 allocate(Noise(vectorstotal))
 
-Noise(i)=0
+Noise=0
 if (random_D) then
     do i=2,vectorstotal
     w = 0

@@ -561,21 +561,28 @@ if (files) then
     open (unit=41,file='coefficients.data',status='unknown')
     open (unit=42,file='probabilities.data',status='unknown')
     open (unit=43,file='eigenvalues.data',status='unknown')
+    open (unit=44,file='maximumprob.data',status='unknown')
 
-    write(41,*) '#COEFFICIENTS. EACH EIGENVECTORS IS A COLUMN ORDERED BY INCREASING VALUE OF ENERGY. ALL ZEROS VECTOR INCLUDED'
-    write(42,*) '#AMPLITUDES. EACH EIGENVECTORS IS A COLUMN ORDERED BY INCREASING VALUE OF ENERGY. ALL ZEROS VECTOR INCLUDED'
+    write(41,*) '#COEFFICIENTS. EACH EIGENVECTORS IS A COLUMN ORDERED BY INCREASING VALUE OF ENERGY.'&
+&'ROWS ARE ORDERED SITE BASIS VECTORS. ALL ZEROS VECTOR INCLUDED'
+    write(42,*) '#AMPLITUDES. EACH EIGENVECTORS IS A COLUMN ORDERED BY INCREASING VALUE OF ENERGY.'&
+&'ROWS ARE ORDERED SITE BASIS VECTORS. ALL ZEROS VECTOR INCLUDED'
     write(43,*) '#EIGENVALUES. ENERGY OF ALL ZEROS STATE INCLUDED'
+    write(44,*) '#MAXIMUM PROBABILITIES PER ORDERED SITE BASIS VECTOR.'
+
 
     do i=1,vectorstotal
         write(41,*) real(hamiD(i,:))
         write(42,*) (abs(dconjg(hamiD(i,:))*(hamiD(i,:))))
         if (eigvals(i)==0._dbl) cycle
         write(43,*) eigvals(i)
+        write(44,*) MAXVAL((abs(dconjg(hamiD(i,:))*(hamiD(i,:)))))
     enddo
 
     close(41)
     close(42)
     close(43)
+    
 
 endif
 

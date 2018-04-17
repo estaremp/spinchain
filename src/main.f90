@@ -77,12 +77,16 @@ real(kind=dbl), allocatable, dimension(:,:) :: hami !Hamiltonian
 
 !strings
 character :: a
-character(len=32) :: tmp
+character(len=32) :: tmp, tmp2
 character(len=500) :: fmt1,fmt2 !format descriptors
 
 !random number generator
 real(dubp), external :: algor_uniform_random
 
+
+!logicals
+logical, parameter, dimension(4) :: topology = (/linear,star,lattice,squared/)
+logical, parameter, dimension(6) :: coupling = (/uniform, pst, ssh_a, ssh_b, abc, kitaev/)
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!! START PROGRAM AND WRITE OUTPUT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -118,9 +122,83 @@ endif
 
 write(*,*) '>> Defining System'
 
+!Write initial conditions
+if (output) then
+202 FORMAT (/"NUMBER OF SITES = ",A)
+write(tmp,'(i4.1)') N
+write(40,202) adjustl(trim(tmp))
+
+302 FORMAT ("NUMBER OF EXCITATIONS = ",A)
+write(tmp,'(i4.1)') exno
+write(40,302) adjustl(trim(tmp))
+
+402 FORMAT ("TOPOLOGY = ",A)
+if (linear) then
+tmp = 'LINEAR'
+else if (star) then
+tmp = 'STAR'
+else if (lattice) then
+tmp = 'LATTICE'
+else if (squared) then
+tmp = 'SQUARED'
+end if
+write(40,402) adjustl(trim(tmp))
+
+502 FORMAT ("COUPLING CONFIGURATION = ",A)
+if (uniform) then
+tmp = 'UNIFORM'
+else if (pst) then
+tmp = 'PST'
+else if (ssh_a) then
+tmp = 'SSH - A'
+else if (ssh_b) then
+tmp = 'SSG - B'
+else if (abc) then
+tmp = 'ABC'
+end if
+write(40,502) adjustl(trim(tmp))
+
+602 FORMAT ("INITIAL INJECTED VECTOR INDEX = ",A)
+do i=1,numI
+write(tmp,'(i3.1)') initialVec1
+write(40,602) tmp
+enddo
+
+702 FORMAT ("DIAGONAL DISORDER = ",A)
+tmp = 'NO'
+if (random_D) then
+write(tmp,'(f8.2)') E_D
+endif
+write(40,702) adjustl(trim(tmp))
+
+802 FORMAT ("OFF-DIAGONAL DISORDER = ",A)
+tmp = 'NO'
+if (random_J) then
+write(tmp,'(f8.2)') E_J
+endif
+write(40,802) adjustl(trim(tmp))
+
+902 FORMAT ("TOTAL TIME = ",A)
+write(tmp,'(f8.2)') totaltime
+write(40,902) adjustl(trim(tmp))
+
+903 FORMAT ("TIME STEP = ",A)
+write(tmp,'(f8.2)') totaltime/real(steps)
+write(40,903) adjustl(trim(tmp))
+
+endif
+
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!! INITIAL CHECKS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+if (count(topology).ne.1) then
+STOP 'ERROR: only one topology can be chosen. Check your PARAMETERS file.'
+endif
+
+if (count(coupling).ne.1) then
+STOP 'ERROR: only one coupling configurations can be chosen. Check your PARAMETERS file.'
+endif
 
 if (linear) then
 if (ssh_a.or.ssh_b) then
@@ -393,6 +471,7 @@ enddo
 !save Hamiltonian matrix
 if (files) then
     open(unit=89,file='hami.data',status='unknown')
+    write(89,*) '#HAMILTONIAN'
     do i=1,vectorstotal
         write(89,*) (hami(i,j),j=1,vectorstotal)
     enddo
@@ -456,7 +535,6 @@ if (output) then
         enddo
 
         fmt2=trim(fmt2)//")"
-    endif
 
         !Eigenvalues
         write(40,FMT=201) 'EIGENVALUES:'
@@ -473,6 +551,7 @@ if (output) then
         do i=1,vectorstotal
             write(40,fmt1) i ,(hamiD(i,:))
         enddo
+    endif
 
 endif
 
@@ -483,6 +562,9 @@ if (files) then
     open (unit=42,file='probabilities.data',status='unknown')
     open (unit=43,file='eigenvalues.data',status='unknown')
 
+    write(41,*) '#COEFFICIENTS. EACH EIGENVECTORS IS A COLUMN ORDERED BY INCREASING VALUE OF ENERGY. ALL ZEROS VECTOR INCLUDED'
+    write(42,*) '#AMPLITUDES. EACH EIGENVECTORS IS A COLUMN ORDERED BY INCREASING VALUE OF ENERGY. ALL ZEROS VECTOR INCLUDED'
+    write(43,*) '#EIGENVALUES. ENERGY OF ALL ZEROS STATE INCLUDED'
 
     do i=1,vectorstotal
         write(41,*) real(hamiD(i,:))
@@ -524,6 +606,7 @@ call reduced_density_matrix(HT,vectorstotal,red_rho,c_i)
 !!Save reduced density matrix
 if (files) then
     open(unit=89,file='reduced_rho.data',status='unknown')
+    write(89,*) '#REDUCED DENSITY MATRIX.'
     do i=1,4
         write(89,*) (red_rho(i,j),j=1,4)
     enddo
@@ -547,7 +630,10 @@ endif
     write(46,401) graphical
 
     501 FORMAT ("REALISATIONS=",A)
+    tmp = '0'
+    if ((random_D).or.(random_J)) then
     write(tmp,'(i5.4)') num_realisations
+    endif
     write(46,501) adjustl(trim(tmp))
 
     601 FORMAT ("N=",A)
@@ -559,7 +645,7 @@ endif
     write(46,701) adjustl(trim(tmp))
 
     801 FORMAT ("TOTALTIME=",A)
-    write(tmp,'(f6.2)') totaltime
+    write(tmp,'(f8.2)') totaltime
     write(46,801) adjustl(trim(tmp))
 
     901 FORMAT ("INITIALVEC=",A)
@@ -693,4 +779,4 @@ algor_uniform_random=(notright*1.0_dubp)-0.5_dubp!notright
 return
 end function algor_uniform_random
 
-!**********************************************************************************!
+!**********************************************************************************!

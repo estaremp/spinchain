@@ -48,6 +48,8 @@ fidelity=0._dbl
 open (unit=44,file='dynamics.data',status='unknown')
 open (unit=45,file='exmap.data',status='unknown')
 
+write(44,*) '#DYNAMICS. TIME (1st COL)  AND FIDELITIES AGAINST ALL THE BASIS VECTORS ORDERED BY INDEX NUMBER'
+
 !TODO: to be converted in function
 !Define |¥(0)> = \sum{a_m|m>} and a_m = <¥(0)|m>
 !being <¥(0)|=norm*(<initialVec1|+<initialVec2|+...)

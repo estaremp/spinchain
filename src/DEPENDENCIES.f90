@@ -12,5 +12,6 @@ CONTAINS
     include 'Hamiltonian_star.f90'
     include 'Dynamics.f90'
     include 'Reducedrho.f90'
+    include 'Eof.f90'
 
 END MODULE

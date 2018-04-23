@@ -16,15 +16,15 @@ logical, parameter :: squared = .false.
 !*Define couplings scheme*!:
 !* Check one *!
 logical, parameter :: uniform = .false.
-logical, parameter :: pst = .true.
+logical, parameter :: pst = .false.
 logical, parameter :: ssh_a = .false.
 logical, parameter :: ssh_b = .false.
-logical, parameter :: abc = .false.
+logical, parameter :: abc = .true.
 logical, parameter :: kitaev = .false.
 
 !*Define presence of disorder*!:
 logical, parameter :: random_J = .false. !Off-diagonal disorder
-logical, parameter :: random_D = .true. !Diagonal disorder
+logical, parameter :: random_D = .false. !Diagonal disorder
 
 !*Manage files*!:
 logical, parameter :: output = .true.
@@ -35,11 +35,11 @@ logical, parameter :: graphical = .true.
 !!Basic characteristics of the system *
 !**************************************
 
-integer, parameter :: N = 10           !Total number of sites
+integer, parameter :: N = 7           !Total number of sites
 integer, parameter :: exno = 1         !Total number of excitations
 
 integer, parameter :: numI = 1         !Total number of initial injected states
-integer, parameter :: initialVec1 = 2  !Initial state 1
+integer, parameter :: initialVec1 = 5  !Initial state 1
 integer, parameter :: initialVec2 = 0  !Initial state 2
 integer, parameter :: initialVec3 = 0  !Initial state 3
 integer, parameter :: initialVec4 = 0  !Initial state 4
@@ -70,11 +70,14 @@ real(kind=dbl), parameter :: error=0.000001_dbl
 !**********************
 
 integer, parameter :: steps = 5000
-real(kind=dbl), parameter :: totalTime = 20
+real(kind=dbl), parameter :: totalTime = 300
 
 !****************
 !!Entanglements *
 !****************
+
+!choose your measure
+logical, parameter :: eof = .true.
 
 !qubits to trace for EOF
 integer, parameter :: Q1 = 1

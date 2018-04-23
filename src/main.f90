@@ -69,7 +69,6 @@ real(kind=dbl), allocatable, dimension(:) :: Noise
 complex(kind=dbl), allocatable, dimension(:) :: work
 complex(kind=dbl), allocatable, dimension(:) :: c_i
 
-complex(kind=dbl), allocatable, dimension(:,:) :: red_rho
 complex(kind=dbl), allocatable, dimension(:,:) :: hamiD !diagonalized Hamiltonian
 
 !matrices
@@ -601,24 +600,28 @@ call injection_dynamics(HT,hamiD,eigvals,vectorstotal,initialVec1,norm,c_i)
 write(*,*) '>> Dynamics'
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!! ENTANGLEMENT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!! REDUCED DENSITY MATRIX !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-allocate(red_rho(4,4))
+!red_rho=cmplx(0.0_dbl, 0.0_dbl, kind=dbl)
+!
+!call reduced_density_matrix(HT,vectorstotal,red_rho,c_i)
+!
+!!!Save reduced density matrix
+!if (files) then
+!    open(unit=89,file='reduced_rho.data',status='unknown')
+!    write(89,*) '#REDUCED DENSITY MATRIX.'
+!    do i=1,4
+!        write(89,*) (red_rho(i,j),j=1,4)
+!    enddo
+!    close(89)
+!endif
 
-red_rho=cmplx(0.0_dbl, 0.0_dbl, kind=dbl)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!! EOF !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-call reduced_density_matrix(HT,vectorstotal,red_rho,c_i)
 
-!!Save reduced density matrix
-if (files) then
-    open(unit=89,file='reduced_rho.data',status='unknown')
-    write(89,*) '#REDUCED DENSITY MATRIX.'
-    do i=1,4
-        write(89,*) (red_rho(i,j),j=1,4)
-    enddo
-    close(89)
-endif
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!! ENTROPY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -681,7 +684,6 @@ deallocate(hamiD)
 deallocate(eigvals)
 deallocate(rwork)
 deallocate(work)
-deallocate(red_rho)
 deallocate(c_i)
 deallocate(Noise)
 

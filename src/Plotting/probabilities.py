@@ -5,7 +5,7 @@ import numpy as np
 from pylab import *
 
 #READ DATA FROM FILE
-eigen=np.loadtxt('probabilities.data',skiprows=1)
+eigen=np.loadtxt('probabilities.data',skiprows=1+2)
 
 #SET SIZE FIGURE
 fig = plt.figure(figsize=(10,7))

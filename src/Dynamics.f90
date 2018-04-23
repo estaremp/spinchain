@@ -36,7 +36,10 @@ real(kind=dbl), dimension(N) :: siteProb
 complex(kind=dbl), allocatable, dimension(:) :: a_m
 complex(kind=dbl), allocatable, dimension(:,:) :: Y_o, Y_t
 complex(kind=dbl) :: sum_vec
+complex(kind=dbl), allocatable, dimension(:,:) :: red_rho
+real(kind=dbl) :: eof_rho
 
+allocate(red_rho(4,4))
 allocate(a_m(vectorstotal))
 allocate(fidelity(vectorstotal))
 allocate(Y_o(vectorstotal,vectorstotal))
@@ -47,6 +50,7 @@ fidelity=0._dbl
 !open files
 open (unit=44,file='dynamics.data',status='unknown')
 open (unit=45,file='exmap.data',status='unknown')
+open (unit=46,file='eof.data',status='unknown')
 
 write(44,*) '#DYNAMICS. TIME (1st COL)  AND FIDELITIES AGAINST ALL THE BASIS VECTORS ORDERED BY INDEX NUMBER'
 
@@ -101,15 +105,24 @@ do while (time<=totalTime)
         write(45,*) time*J_max, siteProb
     endif
 
+    if (eof) then
+        red_rho=cmplx(0.0_dbl, 0.0_dbl, kind=dbl)
+        call reduced_density_matrix(HT,vectorstotal,red_rho,c_i)
+        call entanglement_of_formation(red_rho,eof_rho)
+        write(46,*) time*J_max, eof_rho
+    endif
+
     time = time + step_size
 
 enddo
 
 close(44)
 close(45)
+close(46)
 
 deallocate(a_m)
 deallocate(Y_o)
 deallocate(Y_t)
+deallocate(red_rho)
 
 end subroutine

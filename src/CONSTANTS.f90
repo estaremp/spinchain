@@ -17,7 +17,6 @@ complex(kind=dbl), parameter :: im = cmplx(0._dbl,1._dbl,kind=dbl)
 
 complex(kind=dbl), dimension (4,4) :: pauli = cmplx(0.0_dbl,0.0_dbl,kind=dbl)
 
-
 contains
     subroutine calc_pauli(pauli)
 

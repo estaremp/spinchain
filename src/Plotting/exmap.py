@@ -2,7 +2,7 @@ import numpy as np
 from pylab import *
 
 #LOAD DATA FILES
-data = np.loadtxt('exmap.data')
+data = np.loadtxt('exmap.data',comments='#')
 
 #SET SIZE FIGURE
 plt.figure(figsize=(10,7))

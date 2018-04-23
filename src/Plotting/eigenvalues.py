@@ -11,7 +11,7 @@ import numpy as np
 #i.e. to higlight areas of the spectrum by rescaling it
 
 #LOAD DATA FROM FILE
-data=np.loadtxt('eigenvalues.data')
+data=np.loadtxt('eigenvalues.data',comments='#')
 
 #SET SIZE OF THE FIGURE
 fig = plt.figure(figsize=(20,10))

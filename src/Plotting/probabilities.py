@@ -5,7 +5,7 @@ import numpy as np
 from pylab import *
 
 #READ DATA FROM FILE
-eigen=np.loadtxt('probabilities.data',skiprows=1+2)
+eigen=np.loadtxt('probabilities.data',skiprows=2,comments='#')
 
 #SET SIZE FIGURE
 fig = plt.figure(figsize=(10,7))
@@ -13,7 +13,7 @@ fig = plt.figure(figsize=(10,7))
 ax=plt.subplot()
 
 #SET LIMITS
-ax.set_xlim([-1,len(eigen)])
+ax.set_xlim([0,len(eigen)+1])
 ax.set_ylim([0,1])
 
 #SET LABEL NAMES
@@ -28,7 +28,7 @@ ax.tick_params(axis='y', labelsize=20)
 ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
 #PLOT
-ax.plot(eigen)
+ax.plot(np.arange(1,len(eigen)+1),eigen)
 
 fig.tight_layout()
 

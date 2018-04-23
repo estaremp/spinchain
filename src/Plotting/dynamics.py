@@ -3,7 +3,7 @@ import numpy as np
 from pylab import *
 
 #READ THE DATA FROM FILE
-fidelity=np.loadtxt('dynamics.data')
+fidelity=np.loadtxt('dynamics.data',comments='#')
 
 #SET SIZE FIGURE
 plt.figure(figsize=(10,7))

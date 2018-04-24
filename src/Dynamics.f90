@@ -12,17 +12,16 @@
 ! Written by Marta Estarellas, v0.1, 31/03/2017                           !
 !=========================================================================!
 
-subroutine injection_dynamics(HT,hami,eigvals,vectorstotal,initialVec,norm,c_i)
+subroutine injection_dynamics(HT,hami,eigvals,vectorstotal,c_i)
 
 use constants
 use parameters
 
 !inputs
 integer, intent(in) :: vectorstotal
-integer, intent(in) :: initialVec
 integer, dimension(vectorstotal,vectorstotal), intent(in) :: HT
 
-real(kind=dbl), intent(in) :: norm
+real(kind=dbl) :: norm
 
 real(kind=dbl), dimension(vectorstotal), intent(in) :: eigvals
 complex(kind=dbl), dimension(vectorstotal,vectorstotal), intent(in) :: hami
@@ -52,13 +51,23 @@ open (unit=44,file='dynamics.data',status='unknown')
 open (unit=45,file='exmap.data',status='unknown')
 open (unit=46,file='eof.data',status='unknown')
 
-write(44,*) '#DYNAMICS. TIME (1st COL)  AND FIDELITIES AGAINST ALL THE BASIS VECTORS ORDERED BY INDEX NUMBER'
+write(44,*) '#DYNAMICS. TIME (1st COL) AND FIDELITIES AGAINST ALL THE BASIS VECTORS ORDERED BY INDEX NUMBER'
+write(45,*) '#DYNAMICS. TIME (1st COL) AND SITE OCCUPATION PROBABILITES ORDERED BY SITE'
+write(46,*) '#EOF. TIME (1st COL) AND EOF BETWEEN Q1 AND Q2'
+
+!normalisation factor
+norm=(1._dbl/sqrt(float(numI)))
+
+call initialState(initialVec)
 
 !TODO: to be converted in function
 !Define |¥(0)> = \sum{a_m|m>} and a_m = <¥(0)|m>
 !being <¥(0)|=norm*(<initialVec1|+<initialVec2|+...)
 do i=1,vectorstotal
-    a_m(i) = norm*dconjg(hami(initialVec,i))
+    a_m(i)=0
+    do j=1,numI
+        a_m(i) = a_m(i)+norm*(dconjg(hami(initialVec(j),i)))
+    enddo
 enddo
 
 step_size = totalTime/steps

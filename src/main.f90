@@ -55,7 +55,7 @@ integer, allocatable, dimension (:) :: iwork
 integer, allocatable, dimension(:,:) :: H1,H2,H3,HT !Hilbert subspaces matrices
 
 !floats
-real(kind=dbl) :: norm,normal,orto !normaliztion constant
+real(kind=dbl) :: normal,orto !normaliztion constant
 real(kind=dbl) :: r !random number
 
 real(kind=dbl), dimension(N-1) :: Js = 0.0_dbl
@@ -123,15 +123,15 @@ write(*,*) '>> Defining System'
 
 !Write initial conditions
 if (output) then
-202 FORMAT (/"NUMBER OF SITES = ",A)
+201 FORMAT (/"NUMBER OF SITES = ",A)
 write(tmp,'(i4.1)') N
+write(40,201) adjustl(trim(tmp))
+
+202 FORMAT ("NUMBER OF EXCITATIONS = ",A)
+write(tmp,'(i4.1)') exno
 write(40,202) adjustl(trim(tmp))
 
-302 FORMAT ("NUMBER OF EXCITATIONS = ",A)
-write(tmp,'(i4.1)') exno
-write(40,302) adjustl(trim(tmp))
-
-402 FORMAT ("TOPOLOGY = ",A)
+203 FORMAT ("TOPOLOGY = ",A)
 if (linear) then
 tmp = 'LINEAR'
 else if (star) then
@@ -141,9 +141,9 @@ tmp = 'LATTICE'
 else if (squared) then
 tmp = 'SQUARED'
 end if
-write(40,402) adjustl(trim(tmp))
+write(40,203) adjustl(trim(tmp))
 
-502 FORMAT ("COUPLING CONFIGURATION = ",A)
+204 FORMAT ("COUPLING CONFIGURATION = ",A)
 if (uniform) then
 tmp = 'UNIFORM'
 else if (pst) then
@@ -155,35 +155,47 @@ tmp = 'SSG - B'
 else if (abc) then
 tmp = 'ABC'
 end if
-write(40,502) adjustl(trim(tmp))
+write(40,204) adjustl(trim(tmp))
 
-602 FORMAT ("INITIAL INJECTED VECTOR INDEX = ",A)
+205 FORMAT ("INITIAL INJECTED VECTOR INDEX = ",A)
 do i=1,numI
-write(tmp,'(i3.1)') initialVec1
-write(40,602) tmp
+write(tmp,'(i3.1)') initialVec(i)
+write(40,205) tmp
 enddo
 
-702 FORMAT ("DIAGONAL DISORDER = ",A)
+206 FORMAT ("DIAGONAL DISORDER = ",A)
 tmp = 'NO'
 if (random_D) then
 write(tmp,'(f8.2)') E_D
 endif
-write(40,702) adjustl(trim(tmp))
+write(40,206) adjustl(trim(tmp))
 
-802 FORMAT ("OFF-DIAGONAL DISORDER = ",A)
+207 FORMAT ("OFF-DIAGONAL DISORDER = ",A)
 tmp = 'NO'
 if (random_J) then
 write(tmp,'(f8.2)') E_J
 endif
-write(40,802) adjustl(trim(tmp))
+write(40,207) adjustl(trim(tmp))
 
-902 FORMAT ("TOTAL TIME = ",A)
+208 FORMAT ("TOTAL TIME = ",A)
 write(tmp,'(f8.2)') totaltime
-write(40,902) adjustl(trim(tmp))
+write(40,208) adjustl(trim(tmp))
 
-903 FORMAT ("TIME STEP = ",A)
-write(tmp,'(f8.2)') totaltime/real(steps)
-write(40,903) adjustl(trim(tmp))
+209 FORMAT ("TIME STEP = ",A)
+write(tmp,'(f8.4)') totaltime/real(steps)
+write(40,209) adjustl(trim(tmp))
+
+
+if (eof) then
+210 FORMAT ("EOF = Qubit ",A,'- Qubit ',A)
+write(tmp,'(i3.1)') Q1
+write(tmp2,'(i3.1)') Q2
+write(40,210) adjustl(trim(tmp)), adjustl(trim(tmp2))
+else
+211 FORMAT ("EOF = ",A)
+tmp = 'NO'
+write(40,211) adjustl(trim(tmp))
+endif
 
 endif
 
@@ -328,8 +340,8 @@ endif
 
 !Stdout vectors martix
 if (output) then
-    201 FORMAT (/A)
-    write(40,FMT=201) 'BASIS VECTORS:'
+    200 FORMAT (/A)
+    write(40,FMT=200) 'BASIS VECTORS:'
     do i=1,vectorstotal
         write(40,*) i,'-->',(HT(i,j),j=1,N)
     enddo
@@ -346,8 +358,6 @@ write(*,*) '>> Defining initial injection'
 !normalization factor dependenig
 !on the number of initial injections
 
-norm=(1._dbl/sqrt(float(numI)))
-
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!! DEFINE CONNECTIVITY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -363,7 +373,7 @@ call couplings(Js)
 !Stdout coupling pattern
 301 FORMAT ("(spin",I3,")-(spin",I3,") -->",F6.2)
 if (output) then
-    write(40,FMT=201) 'COUPLING PATTERN:'
+    write(40,FMT=200) 'COUPLING PATTERN:'
     do i=1,N-1
         write(40,FMT=301) i, i+1, Js(i)
     enddo
@@ -401,7 +411,7 @@ endif
 
 !Stdout Hamiltonian
 if (output) then
-    write(40,FMT=201) 'HAMILTONIAN MATRIX:'
+    write(40,FMT=200) 'HAMILTONIAN MATRIX:'
     do i=1,vectorstotal
         write(40,*) (hami(i,j),j=1,vectorstotal)
     enddo
@@ -526,7 +536,7 @@ if (output) then
     !otherwise the
     !file gets too
     !messy
-    if (N.le.20) then
+    if ((N.le.20).and.(exno.eq.1)) then
     fmt2='(6X,'
         do i=1,vectorstotal
             write(tmp,'(i3.1)') i
@@ -536,13 +546,13 @@ if (output) then
         fmt2=trim(fmt2)//")"
 
         !Eigenvalues
-        write(40,FMT=201) 'EIGENVALUES:'
+        write(40,FMT=200) 'EIGENVALUES:'
         do i=1,vectorstotal
             write(40,*) eigvals(i)
         enddo
 
         !Eigenvectors
-        write(40,FMT=201) 'EIGENVECTORS'
+        write(40,FMT=200) 'EIGENVECTORS'
 
         if (N.le.20) then
         write(40,fmt2)
@@ -565,7 +575,7 @@ if (files) then
     write(41,*) '#COEFFICIENTS. EACH EIGENVECTORS IS A COLUMN ORDERED BY INCREASING VALUE OF ENERGY.'&
 &'ROWS ARE ORDERED SITE BASIS VECTORS. ALL ZEROS VECTOR INCLUDED'
     write(42,*) '#AMPLITUDES. EACH EIGENVECTORS IS A COLUMN ORDERED BY INCREASING VALUE OF ENERGY.'&
-&'ROWS ARE ORDERED SITE BASIS VECTORS. ALL ZEROS VECTOR INCLUDED'
+&'ROWS ARE ORDERED SITE BASIS VECTORS. ALL ZEROS VECTOR NOT INCLUDED'
     write(43,*) '#EIGENVALUES. ENERGY OF ALL ZEROS STATE INCLUDED'
     write(44,*) '#MAXIMUM PROBABILITIES PER ORDERED SITE BASIS VECTOR.'
 
@@ -595,7 +605,7 @@ allocate(c_i(vectorstotal))
 
 c_i=cmplx(0.0_dbl, 0.0_dbl, kind=dbl)
 
-call injection_dynamics(HT,hamiD,eigvals,vectorstotal,initialVec1,norm,c_i)
+call injection_dynamics(HT,hamiD,eigvals,vectorstotal,c_i)
 
 write(*,*) '>> Dynamics'
 
@@ -639,28 +649,33 @@ write(*,*) '>> Dynamics'
     401 FORMAT ("GRAPHICAL=",L)
     write(46,401) graphical
 
-    501 FORMAT ("REALISATIONS=",A)
+    402 FORMAT ("REALISATIONS=",A)
     tmp = '0'
     if ((random_D).or.(random_J)) then
     write(tmp,'(i5.4)') num_realisations
     endif
-    write(46,501) adjustl(trim(tmp))
+    write(46,402) adjustl(trim(tmp))
 
-    601 FORMAT ("N=",A)
+    403 FORMAT ("N=",A)
     write(tmp,'(i5.4)') N
-    write(46,601) adjustl(trim(tmp))
+    write(46,403) adjustl(trim(tmp))
 
-    701 FORMAT ("VECTORS=",A)
+    404 FORMAT ("VECTORS=",A)
     write(tmp,'(i5.4)') vectorstotal
-    write(46,701) adjustl(trim(tmp))
+    write(46,404) adjustl(trim(tmp))
 
-    801 FORMAT ("TOTALTIME=",A)
+    405 FORMAT ("TOTALTIME=",A)
     write(tmp,'(f8.2)') totaltime
-    write(46,801) adjustl(trim(tmp))
+    write(46,405) adjustl(trim(tmp))
 
-    901 FORMAT ("INITIALVEC=",A)
-    write(tmp,'(i5.2)') initialVec1
-    write(46,901) adjustl(trim(tmp))
+    406 FORMAT ("INITIALVEC=",A)
+    do i=1,numI
+    write(tmp,'(i5.2)') initialVec(i)
+    write(46,406) adjustl(trim(tmp))
+    enddo
+
+    407 FORMAT ("EOF=",L)
+    write(46,407) eof
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!! FREE SPACE AND CLOSE FILES AND CLEAN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

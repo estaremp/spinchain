@@ -47,7 +47,10 @@ then
     python2 bin/eigenvalues.pyc $VECTORS
     python2 bin/dynamics.pyc $TOTALTIME $INITIALVEC $N
     python2 bin/exmap.pyc
-
+    if [ $EOF = 'T' ] ;
+    then
+        python2 bin/eof.pyc $TOTALTIME $INITIALVEC
+    fi
 fi
 
 #If Plots have been created move them to the required folder

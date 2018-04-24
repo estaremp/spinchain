@@ -36,13 +36,11 @@ logical, parameter :: graphical = .true.
 !**************************************
 
 integer, parameter :: N = 7           !Total number of sites
-integer, parameter :: exno = 1         !Total number of excitations
+integer, parameter :: exno = 2         !Total number of excitations
 
-integer, parameter :: numI = 1         !Total number of initial injected states
-integer, parameter :: initialVec1 = 5  !Initial state 1
-integer, parameter :: initialVec2 = 0  !Initial state 2
-integer, parameter :: initialVec3 = 0  !Initial state 3
-integer, parameter :: initialVec4 = 0  !Initial state 4
+integer, parameter :: numI = 4         !Total number of initial injected states
+integer, dimension(numI) :: initialVec
+!GO TO END OF FILE TO SPECIFY INITIAL VECTORS
 
 integer, parameter :: branches = 3     !Number of branches
 
@@ -70,7 +68,7 @@ real(kind=dbl), parameter :: error=0.000001_dbl
 !**********************
 
 integer, parameter :: steps = 5000
-real(kind=dbl), parameter :: totalTime = 300
+real(kind=dbl), parameter :: totalTime = 500
 
 !****************
 !!Entanglements *
@@ -83,6 +81,26 @@ logical, parameter :: eof = .true.
 integer, parameter :: Q1 = 1
 integer, parameter :: Q2 = N
 
+
+!****************
+!!INITIAL STATE *
+!****************
+
+contains
+
+subroutine initialState(initialVec)
+
+integer, dimension(numI), intent(inout) :: initialVec
+
+!Comment vectors not needed
+
+initialVec(1) = 2 !Initial state 1
+!initialVec(2) = 0  !Initial state 2
+!initialVec(3) = 0  !Initial state 3
+!initialVec(4) = 0  !Initial state 4
+!!Keep adding vectors in this fasion and with this same numenclature
+
+end subroutine initialState
 
 END MODULE
 

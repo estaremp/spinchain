@@ -38,7 +38,7 @@ logical, parameter :: graphical = .true.
 integer, parameter :: N = 7           !Total number of sites
 integer, parameter :: exno = 2         !Total number of excitations
 
-integer, parameter :: numI = 4         !Total number of initial injected states
+integer, parameter :: numI = 1         !Total number of initial injected states
 integer, dimension(numI) :: initialVec
 !GO TO END OF FILE TO SPECIFY INITIAL VECTORS
 

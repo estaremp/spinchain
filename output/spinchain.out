@@ -3,7 +3,7 @@
  ***********************************************************
             © Marta P. Estarellas, 27/07/2016              
                     University of York                     
-                    24/ 4/2018  15:30
+                    24/ 4/2018  16:45
  -----------------------------------------------------------
 
 
@@ -11,9 +11,6 @@ NUMBER OF SITES = 7
 NUMBER OF EXCITATIONS = 2   
 TOPOLOGY = LINEAR
 COUPLING CONFIGURATION = ABC
-INITIAL INJECTED VECTOR INDEX =   0                             
-INITIAL INJECTED VECTOR INDEX =   0                             
-INITIAL INJECTED VECTOR INDEX =   0                             
 INITIAL INJECTED VECTOR INDEX =   0                             
 DIAGONAL DISORDER = NO
 OFF-DIAGONAL DISORDER = NO

@@ -98,7 +98,11 @@ initialVec(1) = 2 !Initial state 1
 !initialVec(2) = 0  !Initial state 2
 !initialVec(3) = 0  !Initial state 3
 !initialVec(4) = 0  !Initial state 4
-!!Keep adding vectors in this fasion and with this same numenclature
+
+!!Keep adding vectors in this fashion and with this same numenclature
+!!Normalisation is done automatically
+
+!!Overall initial State = norm*[initialVec(1)+...+intialVec(numI)]
 
 end subroutine initialState
 

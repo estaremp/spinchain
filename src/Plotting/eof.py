@@ -36,4 +36,4 @@ plt.xlabel('$\mathrm{time \cdot J_{max}}$',fontsize=25,color='black')
 l=legend(loc=1,frameon=False,borderaxespad=0.,fontsize=20)
 
 #SAVE AS PNG PICTURE
-savefig('eof.png',transparent=True)
+savefig('eof.png',transparent=False)

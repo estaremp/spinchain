@@ -26,6 +26,10 @@ logical, parameter :: kitaev = .false.
 logical, parameter :: random_J = .false. !Off-diagonal disorder
 logical, parameter :: random_D = .false. !Diagonal disorder
 
+!*You want to calculate dynamical figures?*!:
+logical, parameter        :: dynamics = .true.
+logical, parameter        :: single = .false.
+
 !*Manage files*!:
 logical, parameter :: output = .true.
 logical, parameter :: files = .true.
@@ -35,14 +39,14 @@ logical, parameter :: graphical = .true.
 !!Basic characteristics of the system *
 !**************************************
 
-integer, parameter :: N = 7           !Total number of sites
-integer, parameter :: exno = 2         !Total number of excitations
+integer, parameter :: N = 7            !Total number of sites
+integer, parameter :: exno = 1         !Total number of excitations
 
 integer, parameter :: numI = 1         !Total number of initial injected states
 integer, dimension(numI) :: initialVec
 !GO TO END OF FILE TO SPECIFY INITIAL VECTORS
 
-integer, parameter :: branches = 3     !Number of branches
+integer, parameter :: branches = 0     !Number of branches
 
 !**********************
 !!Coupling parameters *
@@ -57,18 +61,22 @@ real(kind=dbl), parameter :: J_weak = 0.1   !SSH-like schemes.
 !!Disorder and tolerance parameters *
 !************************************
 
-integer, parameter :: num_realisations = 1
+!*For average purposes*!:
+integer, parameter        :: num_realisations = 10 !How many noise realisations
 
-real(kind=dbl), parameter :: E_J = 0.0_dbl !scale of the disorder on the couplings
-real(kind=dbl), parameter :: E_D = 1.0_dbl !scale of the disorder on the sites
+real(kind=dbl), parameter :: E_J = 0.0_dbl  !scale of the disorder on the couplings, in units of J_max
+real(kind=dbl), parameter :: E_D = 0.00_dbl !scale of the disorder on the sites, in units of J_max
 
 real(kind=dbl), parameter :: error=0.000001_dbl
+
 !**********************
 !!Dynamics parameters *
 !**********************
 
 integer, parameter :: steps = 5000
-real(kind=dbl), parameter :: totalTime = 500
+real(kind=dbl), parameter :: totalTime = 22
+real(kind=dbl), parameter :: t_A = 250   !time for single point calculation (set single option)
+
 
 !****************
 !!Entanglements *
@@ -94,7 +102,7 @@ integer, dimension(numI), intent(inout) :: initialVec
 
 !Comment vectors not needed
 
-initialVec(1) = 2 !Initial state 1
+initialVec(1) = 5 !Initial state 1
 !initialVec(2) = 0  !Initial state 2
 !initialVec(3) = 0  !Initial state 3
 !initialVec(4) = 0  !Initial state 4

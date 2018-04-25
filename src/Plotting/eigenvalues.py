@@ -24,7 +24,7 @@ totalstates=int(sys.argv[1])
 
 #ARRAY GOING FROM 1 TO NUMBER OF STATES
 #EXCLUDING VACUUM STATE
-x = iter(xrange(totalstates))
+x = iter(xrange(totalstates-1))
 
 ax = plt.subplot(G[:,0:2])
 
@@ -37,7 +37,7 @@ ax.set_ylabel('Energy',fontsize=25)
 ax.tick_params(axis='x', labelsize=20)
 ax.tick_params(axis='y', labelsize=20)
 
-ax.plot(np.arange(0,totalstates),data, color='salmon', lw=2, marker='8')
+ax.plot(np.arange(1,totalstates),data, color='salmon', lw=2, marker='8')
 
 #GENERATE THREE SUBPLOTS TO
 #REPRESENT DIFFERENT REGIONS

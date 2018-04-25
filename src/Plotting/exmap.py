@@ -4,6 +4,9 @@ from pylab import *
 #LOAD DATA FILES
 data = np.loadtxt('exmap.data',comments='#')
 
+#ARGUMENTS PASSED
+totaltime=float(sys.argv[1])
+
 #SET SIZE FIGURE
 plt.figure(figsize=(10,7))
 
@@ -26,11 +29,12 @@ def Colormap(ax,lst):
     c.ax.tick_params(labelsize=20)
 
     #SET X-AXIS TICKS AND LABEL
+    ax.set_xlim([0,totaltime])
     ax.set_xlabel('$\mathrm{time \cdot J_{max}}$',fontsize=20)
     ax.tick_params(axis='y', labelsize=20)
     ax.tick_params(axis='x', labelsize=20)
     
-    #SET X-AXIS TICKS AND LABEL
+    #SET Y-AXIS TICKS AND LABEL
     ax.set_ylim([0,y])
     start, end = ax.get_ylim()
     ax.yaxis.set_ticks(np.arange(0.5, end+0.5, 1))

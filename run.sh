@@ -8,6 +8,7 @@ make
 
 ./run
 
+#This should probably be read using grep
 #Read variables to be used
 source 'info.data'
 
@@ -24,10 +25,13 @@ then
         echo 'Realisation num:' $j
         #Run executable
         ./run
+
         cat eigenvalues.data >> eigenvalues_realisations.data
+        cat eof.data >> eof_realisations.data
     done
 
-    python2 python_scripts/averages.py eigenvalues_realisations.data $VECTORS
+    python2 python_scripts/averageEigenvalues.py eigenvalues_realisations.data $VECTORS $REALISATIONS
+    python2 python_scripts/averageEOF.py eof_realisations.data $TA $OFFNOISE $DIAGNOISE
 
     if [ $GRAPHICAL = 'T' ] ;
     then
@@ -35,10 +39,14 @@ then
     python2 bin/averagedEigenvalues.pyc $VECTORS
     fi
 
+    #If Plots have been created move them to the required folder
+    mkdir output/Plots
+    mv ./*.png ./output/Plots
+
 fi
 
-#Graphical outputs (not done if realisations)
-if [ $GRAPHICAL = 'T' ] ;
+#Graphical outputs (not done if single time realisations)
+if [ $GRAPHICAL = 'T' ] && [ $SINGLE = 'F' ]  ;
 then
     #Plot stuff
     echo ' >> Plot'
@@ -46,19 +54,17 @@ then
     python2 bin/probabilities.pyc $VECTORS
     python2 bin/eigenvalues.pyc $VECTORS
     python2 bin/dynamics.pyc $TOTALTIME $INITIALVEC $N
-    python2 bin/exmap.pyc
+    python2 bin/exmap.pyc $TOTALTIME
     if [ $EOF = 'T' ] ;
     then
         python2 bin/eof.pyc $TOTALTIME $INITIALVEC
     fi
-fi
 
-#If Plots have been created move them to the required folder
-if [ $GRAPHICAL = 'T' ] || [ $REALISATIONS -ne 0 ] ;
-then
+    #If Plots have been created move them to the required folder
     mkdir output/Plots
     mv ./*.png ./output/Plots
 fi
+
 
 mv ./*.data ./*.out ./output
 

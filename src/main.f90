@@ -576,15 +576,16 @@ if (files) then
 &'ROWS ARE ORDERED BY SITE BASIS VECTORS. ENERGY OF |00..0> IS INCLUDED'
     write(42,*) '#MODULUS SQUARE OF THE COEFFICIENTS. EACH EIGENVECTORS IS A COLUMN. COLUMNS ARE ORDERED'&
 &'BY INCREASING VALUE OF ENERGY. ROWS ARE ORDERED BY SITE BASIS VECTORS. VECTOR |00..0> IS INCLUDED'
-    write(43,*) '#EIGENVALUES. ENERGY OF |00..0> IS INCLUDED'
+    write(43,*) '#EIGENVALUES. ENERGY OF |00..0>, E=0, IS EXCLUDED'
     write(44,*) '#MAXIMUM PROBABILITIES PER ORDERED SITE BASIS VECTOR FOR THE EIGENVECTORS. FIRST ONE IS THE |00..0> STATE.'
 
 
     do i=1,vectorstotal
         write(41,*) real(hamiD(i,:))
-        write(42,*) (abs(dconjg(hamiD(i,:))*(hamiD(i,:))))
+        write(42,*) (dble(dconjg(hamiD(i,:))*(hamiD(i,:))))
+        write(44,*) MAXVAL(dble((dconjg(hamiD(i,:))*(hamiD(i,:)))))
+        if (eigvals(i)==0._dbl) cycle
         write(43,*) eigvals(i)
-        write(44,*) MAXVAL((abs(dconjg(hamiD(i,:))*(hamiD(i,:)))))
     enddo
 
     close(41)
@@ -597,20 +598,23 @@ endif
 write(*,*) '>> Hamiltonian Diagonalization'
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!! DYNAMICS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!! DYNAMICS: FIDELITY, ENTROPY AND EOF !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 allocate(c_i(vectorstotal))
 
 c_i=cmplx(0.0_dbl, 0.0_dbl, kind=dbl)
 
-call injection_dynamics(HT,hamiD,eigvals,vectorstotal,c_i)
+if (dynamics) then
+    call injection_dynamics(HT,hamiD,eigvals,vectorstotal,c_i)
 
-write(*,*) '>> Dynamics'
+    write(*,*) '>> Dynamics'
+end if
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!! REDUCED DENSITY MATRIX !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!! CLACULATE EOF AT CERTAIN TIME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
 !red_rho=cmplx(0.0_dbl, 0.0_dbl, kind=dbl)
 !
@@ -625,11 +629,6 @@ write(*,*) '>> Dynamics'
 !    enddo
 !    close(89)
 !endif
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!! EOF !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -667,14 +666,29 @@ write(*,*) '>> Dynamics'
     write(tmp,'(f8.2)') totaltime
     write(46,405) adjustl(trim(tmp))
 
-    406 FORMAT ("INITIALVEC=",A)
+    406 FORMAT ("TA=",A)
+    write(tmp,'(f8.2)') t_A
+    write(46,406) adjustl(trim(tmp))
+
+    407 FORMAT ("INITIALVEC=",A)
     do i=1,numI
     write(tmp,'(i5.2)') initialVec(i)
-    write(46,406) adjustl(trim(tmp))
+    write(46,407) adjustl(trim(tmp))
     enddo
 
-    407 FORMAT ("EOF=",L)
-    write(46,407) eof
+    408 FORMAT ("EOF=",L)
+    write(46,408) eof
+
+    409 FORMAT ("SINGLE=",L)
+    write(46,409) single
+
+    410 FORMAT ("OFFNOISE=",A)
+    write(tmp,'(f8.2)') E_J
+    write(46,410) adjustl(trim(tmp))
+
+    411 FORMAT ("DIAGNOISE=",A)
+    write(tmp,'(f8.2)') E_D
+    write(46,411) adjustl(trim(tmp))
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!! FREE SPACE AND CLOSE FILES AND CLEAN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

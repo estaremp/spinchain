@@ -23,8 +23,14 @@ ax1.set_ylim([0,1])
 #PLOT FIDELITY AGAINST INITIAL STATE
 plt.plot(fidelity[:,0],fidelity[:,injection],color='gray',lw=2,label=r'$|\langle\Psi(t)\vert \psi_{o}\rangle|^2$')
 
-#PLOT FIDELITY AGAINST MIRROR STATE
-plt.plot(fidelity[:,0],fidelity[:,N-injection+3],color='black',ls=':',lw=2,label=r'$|\langle\Psi(t)\vert \psi_{M}\rangle|^2$')
+#PLOT FIDELITY AGAINST DIFFERENT STATE
+
+#FOR LINEAR CHAINS WIHT ONE EX, MIRROR STATE IS:
+against=N-injection+3
+#CHANGE VALUE OF 'AGAINST' TO SET THE INDEX OF THE VECTOR
+#AGAINT WHICH YOU WANT TO PLOT THE FIDELITY
+
+plt.plot(fidelity[:,0],fidelity[:,against],color='black',ls=':',lw=2,label=r'$|\langle\Psi(t)\vert \psi_{M}\rangle|^2$')
 
 #SET SIZE OF AXIS TICKS
 ax1.tick_params(axis='y', labelsize=20)

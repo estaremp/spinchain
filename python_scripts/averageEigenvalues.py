@@ -32,6 +32,8 @@ result = map(lambda y: y/total_real, result)
 #Open file where to save result average
 file=open("averagedEigenvalues.data","w")
 
+file.write("#AVERAGED EIGENVALUES//STANDARD DEVIATION//ERROR OF THE MEAN\n")
+
 for line in result:
     file.write(str(line)+"\n")
 

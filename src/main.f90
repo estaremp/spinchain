@@ -159,6 +159,7 @@ write(40,204) adjustl(trim(tmp))
 
 205 FORMAT ("INITIAL INJECTED VECTOR INDEX = ",A)
 do i=1,numI
+call initialState(initialVec)
 write(tmp,'(i3.1)') initialVec(i)
 write(40,205) tmp
 enddo

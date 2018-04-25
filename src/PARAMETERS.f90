@@ -16,10 +16,10 @@ logical, parameter :: squared = .false.
 !*Define couplings scheme*!:
 !* Check one *!
 logical, parameter :: uniform = .false.
-logical, parameter :: pst = .false.
+logical, parameter :: pst = .true.
 logical, parameter :: ssh_a = .false.
 logical, parameter :: ssh_b = .false.
-logical, parameter :: abc = .true.
+logical, parameter :: abc = .false.
 logical, parameter :: kitaev = .false.
 
 !*Define presence of disorder*!:
@@ -27,8 +27,8 @@ logical, parameter :: random_J = .false. !Off-diagonal disorder
 logical, parameter :: random_D = .false. !Diagonal disorder
 
 !*You want to calculate dynamical figures?*!:
-logical, parameter        :: dynamics = .true.
-logical, parameter        :: single = .false.
+logical, parameter :: dynamics = .true.
+logical, parameter :: single = .false.
 
 !*Manage files*!:
 logical, parameter :: output = .true.
@@ -102,7 +102,7 @@ integer, dimension(numI), intent(inout) :: initialVec
 
 !Comment vectors not needed
 
-initialVec(1) = 5 !Initial state 1
+initialVec(1) = 2 !Initial state 1
 !initialVec(2) = 0  !Initial state 2
 !initialVec(3) = 0  !Initial state 3
 !initialVec(4) = 0  !Initial state 4

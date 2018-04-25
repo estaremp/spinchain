@@ -27,6 +27,8 @@ sterror=stats.sem(lines,ddof=0)
 #Open file where to save result average
 file=open("averagedEOFtA.data","a")
 
+file.write("#TIME//OFF-DIAG NOISE//DIAG NOISE//AVERAGED EOF//STANDARD DEVIATION//STANDARD ERROR \n")
+
 #and save
 file.write(str(tA) + '  ' + str(offnoise) + '  ' + str(diagnoise) + '  ' + str(mean) + '  ' +  str(stdev) + '  ' +  str(sterror) + '\n')
 

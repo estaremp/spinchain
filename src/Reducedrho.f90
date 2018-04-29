@@ -126,6 +126,7 @@ do i =1, vectorstotal
     enddo
     do j=Q2+1,N
         HTrhoP(i,w)=HT(i,j)
+        w=w+1
     enddo
 enddo
 

@@ -46,13 +46,18 @@ integer :: vectors1ex = N       !Initially set to N, reallocate later if needed 
 integer :: vectors2ex = N       !Initially set to N, reallocate later if needed (E.I.)
 integer :: vectors3ex = N       !Initially set to N, reallocate later if needed (E.I.)
 integer :: vectorstotal         !Sum of all the vectors
+integer :: hub
+integer :: len_branch
+
 integer :: info, liwork  !Info in lapack subroutines
 
 integer,dimension(8) :: values !array with date
 integer, dimension(N) :: vec
+integer, dimension(branches-1) :: limits
 integer, allocatable, dimension (:) :: iwork
 
 integer, allocatable, dimension(:,:) :: H1,H2,H3,HT !Hilbert subspaces matrices
+
 
 !floats
 real(kind=dbl) :: normal,orto !normaliztion constant
@@ -213,49 +218,48 @@ STOP 'ERROR: only one coupling configurations can be chosen. Check your PARAMETE
 endif
 
 if (linear) then
-if (ssh_a.or.ssh_b) then
-if (MOD(N-1,4)/=0) then
-STOP 'ERROR: for type (a) ssh chain N needs to be odd and N-1 needs to be divisible by 4.'
-endif
-endif
+    if (ssh_a.or.ssh_b) then
+    if (MOD(N-1,4)/=0) then
+    STOP 'ERROR: for type (a) ssh chain N needs to be odd and N-1 needs to be divisible by 4.'
+    endif
+    endif
 
-if (abc) then
-if (MOD(N-3,4)/=0) then
-STOP 'ERROR: for type ABC chain N needs to be odd and N-3 needs to be divisible by 4.'
-endif
-endif
+    if (abc) then
+    if (MOD(N-3,4)/=0) then
+    STOP 'ERROR: for type ABC linear chain N needs to be odd and N-3 needs to be divisible by 4.'
+    endif
+    endif
 
-if (kitaev) then
-if (MOD(N,2)/=0) then
-STOP 'ERROR: for a kitaev chain N needs to be even.'
-endif
-endif
+    if (kitaev) then
+    if (MOD(N,2)/=0) then
+    STOP 'ERROR: for a kitaev chain N needs to be even.'
+    endif
+    endif
 endif
 
 if (star) then
-if (branches==3) then
-if (MOD((N-1),3)/=0) then
-STOP 'ERROR: Triple branched networks need to have EVEN number of sites and (N-1) needs to be divisible by 3.'
-endif
+
+    if (branches==0) then
+    STOP 'ERROR: For star topology you need to specify how many branches you want.'
+    endif
+
+    if (MOD((N-1),branches)/=0) then
+    write(tmp,'(i2.1)') branches
+    write(*,*) 'ERROR: ',adjustl(trim(tmp)),'-branched networks need (N-1) sites divisible by ',adjustl(trim(tmp)),'.'
+    STOP
+    endif
+
+    if (abc) then
+    if (MOD(N-5,8)/=0) then
+    STOP 'ERROR: for type ABC star chain N needs to be odd and N-5 needs to be divisible by 8.'
+    endif
+    endif
+
 endif
 
-if (branches==4) then
-if (MOD((N-1),4)/=0) then
-STOP 'ERROR: Four branched networks need to have ODD number of sites and (N-1) needs to be divisible by 4.'
-endif
-endif
-
-if (branches==5) then
-if (MOD((N-1),5)/=0) then
-STOP 'ERROR: Five branched networks need to have EVEN number of sites and (N-1) needs to be divisible by 5.'
-endif
-endif
-
-if (branches==6) then
-if (MOD((N-1),6)/=0) then
-STOP 'ERROR: Six branched networks need to have ODD number of sites and (N-1) needs to be divisible by 6.'
-endif
-endif
+if ((max_eof).and.(single)) then
+STOP 'ERROR: If you want to calculate the maximum EOF over a full window you'&
+&'cannot do a single point calculation of the dynamics. Set *single* to False.'
 endif
 
 write(*,*) '>> Initial checks'
@@ -363,13 +367,30 @@ write(*,*) '>> Defining initial injection'
 !!!! DEFINE CONNECTIVITY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-!call connectivity
+!initialize
+limits = 0
+hub = 0
+len_branch = 0
+
+if (star) then
+
+len_branch = ((2*(N - 1)/branches)+1)
+hub = ((len_branch-1)/2) + 1
+
+limits(1) = len_branch
+limits(2) = len_branch + 1
+
+do i=3,branches-1
+    limits(i) = limits(i-1) + (len_branch-2)
+enddo
+
+endif
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!! DEFINE COUPLING PATTERN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-call couplings(Js)
+call couplings(Js,len_branch,hub,limits)
 
 !Stdout coupling pattern
 301 FORMAT ("(spin",I3,")-(spin",I3,") -->",F6.2)
@@ -407,7 +428,7 @@ hami=0.0_dbl
 if (linear) then
     call build_hamiltonian_linear(HT,Js,N,vectorstotal,hami)
 else if (star) then
-    call build_hamiltonian_star(HT,Js,N,vectorstotal,hami,branches)
+    call build_hamiltonian_star(HT,Js,N,vectorstotal,hami,branches,limits,hub,len_branch)
 endif
 
 !Stdout Hamiltonian
@@ -577,7 +598,7 @@ if (files) then
 &'ROWS ARE ORDERED BY SITE BASIS VECTORS. ENERGY OF |00..0> IS INCLUDED'
     write(42,*) '#MODULUS SQUARE OF THE COEFFICIENTS. EACH EIGENVECTORS IS A COLUMN. COLUMNS ARE ORDERED'&
 &'BY INCREASING VALUE OF ENERGY. ROWS ARE ORDERED BY SITE BASIS VECTORS. VECTOR |00..0> IS INCLUDED'
-    write(43,*) '#EIGENVALUES. ENERGY OF |00..0>, E=0, IS EXCLUDED'
+    write(43,*) '#EIGENVALUES. ENERGY OF |00..0>, E=0, IS INCLUDED'
     write(44,*) '#MAXIMUM PROBABILITIES PER ORDERED SITE BASIS VECTOR FOR THE EIGENVECTORS. FIRST ONE IS THE |00..0> STATE.'
 
 
@@ -585,7 +606,6 @@ if (files) then
         write(41,*) real(hamiD(i,:))
         write(42,*) (dble(dconjg(hamiD(i,:))*(hamiD(i,:))))
         write(44,*) MAXVAL(dble((dconjg(hamiD(i,:))*(hamiD(i,:)))))
-        if (eigvals(i)==0._dbl) cycle
         write(43,*) eigvals(i)
     enddo
 
@@ -649,7 +669,7 @@ end if
     write(46,401) graphical
 
     402 FORMAT ("REALISATIONS=",A)
-    tmp = '0'
+    tmp = '1'
     if ((random_D).or.(random_J)) then
     write(tmp,'(i5.4)') num_realisations
     endif
@@ -690,6 +710,9 @@ end if
     411 FORMAT ("DIAGNOISE=",A)
     write(tmp,'(f8.2)') E_D
     write(46,411) adjustl(trim(tmp))
+
+    412 FORMAT ("MAX_EOF=",L)
+    write(46,412) max_eof
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!! FREE SPACE AND CLOSE FILES AND CLEAN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

@@ -16,7 +16,7 @@
 !-------------------------------------------------------------------------!
 ! Written by Marta Estarellas, v0.1, 04/04/2017                           !
 !=========================================================================!
-subroutine build_hamiltonian_star(HT,Js,N,vectorstotal,hami,branches)
+subroutine build_hamiltonian_star(HT,Js,N,vectorstotal,hami,branches,limits,hub,len_branch)
 
 use constants
 
@@ -31,26 +31,12 @@ integer, dimension(vectorstotal,vectorstotal), intent(in) :: HT
 real(kind=dbl), dimension(vectorstotal,vectorstotal), intent(inout) :: hami
 
 integer :: i,j,k
-integer :: l,ll,m
-integer :: hub, len_branch
+integer :: l,ll,m,b
 integer, dimension(N) :: test
-integer, dimension(branches-1) :: limits
 
-!initialize
-limits = 0
-
-!*************************************!
-!******+ DEFINE CONNECTIVITY *********!
-!*************************************!
-
-len_branch = ((2*(N - 1)/branches)+1)
-hub = ((len_branch-1)/2) + 1
-
-limits(1) = len_branch
-limits(2) = len_branch + 1
-do i=3,branches-1
-    limits(i) = limits(i-1) + (len_branch-2)
-enddo
+integer, intent(in) :: hub
+integer, intent(in) :: len_branch
+integer, dimension(branches-1), intent(in) :: limits
 
 !*************************************!
 !******+ BUILD HAMILTONIAN ***********!
@@ -96,24 +82,11 @@ do i=1,vectorstotal
                 !check for connectivity between hub and first sites of upper/lower branches
                 if (k==hub) then
                 if (test(hub).eq.1) then
-                    if (test(limits(1)+(len_branch-1)/2).eq.1) then
+                    do b=3,branches
+                    if (test(limits(b-2)+(len_branch-1)/2).eq.1) then
                         hami(j,i)=Js(k)
                     endif
-                    if ((branches==4).or.(branches==5).or.(branches==6)) then
-                    if (test(limits(2)+(len_branch-1)/2).eq.1) then
-                        hami(j,i)=Js(k)
-                    endif
-                    if ((branches==5).or.(branches==6)) then
-                    if (test(limits(3)+(len_branch-1)/2).eq.1) then
-                        hami(j,i)=Js(k)
-                    endif
-                    endif
-                    if (branches==6) then
-                    if (test(limits(4)+(len_branch-1)/2).eq.1) then
-                        hami(j,i)=Js(k)
-                    endif
-                    endif
-                    endif
+                    enddo
                 endif
                 endif
             enddo
@@ -125,36 +98,16 @@ do i=1,vectorstotal
                     endif
                 endif
             enddo
-            !building third branch
-            if ((branches==4).or.(branches==5).or.(branches==6)) then
-            do k=(limits(2)+(len_branch-1)/2),limits(3)-1
+            !building consecutive branches
+            do b=4,branches
+            do k=(limits(b-2)+(len_branch-1)/2),limits(b-1)-1
                 if ((test(k)).eq.1) then
                     if (test(k+1).eq.1) then
                         hami(j,i)=Js(k)
                     endif
                 endif
             enddo
-            endif
-            !building forth branch
-            if ((branches==5).or.(branches==6)) then
-            do k=(limits(3)+(len_branch-1)/2),limits(4)-1
-                if ((test(k)).eq.1) then
-                    if (test(k+1).eq.1) then
-                        hami(j,i)=Js(k)
-                    endif
-                endif
             enddo
-            endif
-            !building fifth branch
-            if (branches==6) then
-                do k=(limits(4)+(len_branch-1)/2),limits(5)-1
-                    if ((test(k)).eq.1) then
-                        if (test(k+1).eq.1) then
-                            hami(j,i)=Js(k)
-                        endif
-                    endif
-                enddo
-            endif
         endif
     enddo
 enddo

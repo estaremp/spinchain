@@ -1,6 +1,8 @@
 #!/bin/bash
 
 #Clean
+make clean
+rm -rf ./bin
 rm -rf output
 
 #Compile files
@@ -17,8 +19,13 @@ mkdir output
 
 mv src/Plotting/*.pyc ./bin
 
+if [ $MAX_EOF = 'T' ] && [ $REALISATIONS -eq 1 ];
+then
+python2 python_scripts/maxEOF.py eof.data $REALISATIONS $TOTALTIME $OFFNOISE $DIAGNOISE
+fi
+
 #Realisations if noise
-if [ $REALISATIONS -ne 0 ] ;
+if [ $REALISATIONS -ne 1 ] ;
 then
     for j in `seq 1 1 $REALISATIONS`
     do
@@ -27,11 +34,24 @@ then
         ./run
 
         cat eigenvalues.data >> eigenvalues_realisations.data
-        cat eof.data >> eof_realisations.data
+
+        if [ $SINGLE = 'T' ] ;
+        then
+        cat eof.data >> eof_realisations_SP.data
+        elif [ $MAX_EOF = 'T' ] ;
+        then
+        cat eof.data >> eof_realisations_FD.data
+        fi
     done
 
     python2 python_scripts/averageEigenvalues.py eigenvalues_realisations.data $VECTORS $REALISATIONS
-    python2 python_scripts/averageEOF.py eof_realisations.data $TA $OFFNOISE $DIAGNOISE
+    if [ $SINGLE = 'T' ] ;
+    then
+    python2 python_scripts/averageEOF.py eof_realisations_SP.data $TA $OFFNOISE $DIAGNOISE
+    elif [ $MAX_EOF = 'T' ] ;
+    then
+    python2 python_scripts/maxEOF.py eof_realisations_FD.data $REALISATIONS $TOTALTIME $OFFNOISE $DIAGNOISE
+    fi
 
     if [ $GRAPHICAL = 'T' ] ;
     then

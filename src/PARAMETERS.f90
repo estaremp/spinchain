@@ -22,13 +22,13 @@ logical, parameter :: ssh_b = .false.
 logical, parameter :: abc = .true.
 logical, parameter :: kitaev = .false.
 
-!*Define presence of disorder*!:
-logical, parameter :: random_J = .false. !Off-diagonal disorder
-logical, parameter :: random_D = .false. !Diagonal disorder
-
 !*You want to calculate dynamical figures?*!:
 logical, parameter :: dynamics = .true.
 logical, parameter :: single = .false.
+
+!*Define presence of disorder*!:
+logical, parameter :: random_J = .false. !Off-diagonal disorder
+logical, parameter :: random_D = .false. !Diagonal disorder
 
 !*Manage files*!:
 logical, parameter :: output = .true.
@@ -62,7 +62,7 @@ real(kind=dbl), parameter :: J_weak = 0.1   !SSH-like schemes.
 !************************************
 
 !*For average purposes*!:
-integer, parameter        :: num_realisations = 3 !How many noise realisations
+integer, parameter        :: num_realisations = 3 !How many noise realisations (1 by default)
 
 real(kind=dbl), parameter :: E_J = 0.00_dbl  !scale of the disorder on the couplings, in units of J_max
 real(kind=dbl), parameter :: E_D = 0.00_dbl !scale of the disorder on the sites, in units of J_max

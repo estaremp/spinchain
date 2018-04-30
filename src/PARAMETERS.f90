@@ -8,8 +8,8 @@ use constants
 
 !*Define chain topology*!:
 !* Check one *!
-logical, parameter :: linear = .false.
-logical, parameter :: star = .true.
+logical, parameter :: linear = .true.
+logical, parameter :: star = .false.
 logical, parameter :: lattice = .false.
 logical, parameter :: squared = .false.
 
@@ -39,14 +39,14 @@ logical, parameter :: graphical = .true.
 !!Basic characteristics of the system *
 !**************************************
 
-integer, parameter :: N = 13           !Total number of sites
+integer, parameter :: N = 7           !Total number of sites
 integer, parameter :: exno = 1         !Total number of excitations
 
 integer, parameter :: numI = 1         !Total number of initial injected states
 integer, dimension(numI) :: initialVec
 !GO TO END OF FILE TO SPECIFY INITIAL VECTORS
 
-integer, parameter :: branches = 4     !Number of branches
+integer, parameter :: branches = 1     !Number of branches, if linear set to 1.
 
 !**********************
 !!Coupling parameters *
@@ -62,7 +62,7 @@ real(kind=dbl), parameter :: J_weak = 0.1   !SSH-like schemes.
 !************************************
 
 !*For average purposes*!:
-integer, parameter        :: num_realisations = 0 !How many noise realisations
+integer, parameter        :: num_realisations = 3 !How many noise realisations
 
 real(kind=dbl), parameter :: E_J = 0.00_dbl  !scale of the disorder on the couplings, in units of J_max
 real(kind=dbl), parameter :: E_D = 0.00_dbl !scale of the disorder on the sites, in units of J_max
@@ -74,7 +74,7 @@ real(kind=dbl), parameter :: error=0.000001_dbl
 !**********************
 
 integer, parameter :: steps = 5000
-real(kind=dbl), parameter :: totalTime = 200
+real(kind=dbl), parameter :: totalTime = 2000
 real(kind=dbl), parameter :: t_A = 500   !time for single point calculation (set single option)
 
 
@@ -84,12 +84,12 @@ real(kind=dbl), parameter :: t_A = 500   !time for single point calculation (set
 
 !choose your measure
 logical, parameter :: eof = .true.
-logical, parameter :: max_eof =.true. !calculates the maximum eof over
+logical, parameter :: max_eof = .true. !calculates the maximum eof over
                                       !a time window = totalTime
 
 !qubits to trace for EOF
 integer, parameter :: Q1 = 1
-integer, parameter :: Q2 = 7
+integer, parameter :: Q2 = N
 
 
 !****************

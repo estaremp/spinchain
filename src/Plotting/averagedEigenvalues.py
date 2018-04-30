@@ -62,11 +62,11 @@ for i in x:
 
 #**MODIFY DEPENDING ON SYSTEM*
 #ADJUST THESE LIMTIS
-#ax3.set_ylim(-1*(np.amax(data)+0.01),-0.05)
-ax2.set_ylim(-1*(np.amax(data)+0.01),(np.amax(data)+0.01))
+#ax3.set_ylim(-1*(np.amax(data)+0.01),-0.05)ax2.set_ylim(-1*(np.amax(data)+0.01),(np.amax(data)+0.01))
 #ax1.set_ylim(0.05,np.amax(data)+0.01)
 
 #SET X AXIS LIMITS
+
 #ax1.set_xlim(0.8,2.2)
 ax2.set_xlim(0.8,2.2)
 #ax3.set_xlim(0.8,2.2)

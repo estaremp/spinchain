@@ -8,18 +8,18 @@ use constants
 
 !*Define chain topology*!:
 !* Check one *!
-logical, parameter :: linear = .true.
-logical, parameter :: star = .false.
+logical, parameter :: linear = .false.
+logical, parameter :: star = .true.
 logical, parameter :: lattice = .false.
 logical, parameter :: squared = .false.
 
 !*Define couplings scheme*!:
 !* Check one *!
-logical, parameter :: uniform = .false.
+logical, parameter :: uniform = .true.
 logical, parameter :: pst = .false.
 logical, parameter :: ssh_a = .false.
 logical, parameter :: ssh_b = .false.
-logical, parameter :: abc = .true.
+logical, parameter :: abc = .false.
 logical, parameter :: kitaev = .false.
 
 !*You want to calculate dynamical figures?*!:
@@ -27,8 +27,8 @@ logical, parameter :: dynamics = .true.
 logical, parameter :: single = .false.
 
 !*Define presence of disorder*!:
-logical, parameter :: random_J = .false. !Off-diagonal disorder
-logical, parameter :: random_D = .false. !Diagonal disorder
+logical, parameter :: random_J = .true. !Off-diagonal disorder
+logical, parameter :: random_D = .true. !Diagonal disorder
 
 !*Manage files*!:
 logical, parameter :: output = .true.
@@ -39,14 +39,14 @@ logical, parameter :: graphical = .true.
 !!Basic characteristics of the system *
 !**************************************
 
-integer, parameter :: N = 7           !Total number of sites
+integer, parameter :: N = 5           !Total number of sites
 integer, parameter :: exno = 1         !Total number of excitations
 
 integer, parameter :: numI = 1         !Total number of initial injected states
 integer, dimension(numI) :: initialVec
 !GO TO END OF FILE TO SPECIFY INITIAL VECTORS
 
-integer, parameter :: branches = 1     !Number of branches, if linear set to 1.
+integer, parameter :: branches = 4     !Number of branches, if linear set to 1.
 
 !**********************
 !!Coupling parameters *
@@ -62,10 +62,10 @@ real(kind=dbl), parameter :: J_weak = 0.1   !SSH-like schemes.
 !************************************
 
 !*For average purposes*!:
-integer, parameter        :: num_realisations = 3 !How many noise realisations (1 by default)
+integer, parameter        :: num_realisations = 10 !How many noise realisations (1 by default)
 
-real(kind=dbl), parameter :: E_J = 0.00_dbl  !scale of the disorder on the couplings, in units of J_max
-real(kind=dbl), parameter :: E_D = 0.00_dbl !scale of the disorder on the sites, in units of J_max
+real(kind=dbl), parameter :: E_J = 0.10_dbl  !scale of the disorder on the couplings, in units of J_max
+real(kind=dbl), parameter :: E_D = 0.10_dbl !scale of the disorder on the sites, in units of J_max
 
 real(kind=dbl), parameter :: error=0.000001_dbl
 
@@ -74,7 +74,7 @@ real(kind=dbl), parameter :: error=0.000001_dbl
 !**********************
 
 integer, parameter :: steps = 5000
-real(kind=dbl), parameter :: totalTime = 2000
+real(kind=dbl), parameter :: totalTime = 50
 real(kind=dbl), parameter :: t_A = 500   !time for single point calculation (set single option)
 
 
@@ -105,7 +105,7 @@ integer, dimension(numI), intent(inout) :: initialVec
 !Comment vectors not needed
 
 
-initialVec(1) = 5 !Initial state 1
+initialVec(1) = 3 !Initial state 1
 !initialVec(2) = 0  !Initial state 2
 !initialVec(3) = 0  !Initial state 3
 !initialVec(4) = 0  !Initial state 4

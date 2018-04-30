@@ -17,7 +17,7 @@ with open(sys.argv[1]) as e:
             lines.append(float(line.strip()))
 
 #Number of lines per realisation
-results_per_real = int(sys.argv[2])-1
+results_per_real = int(sys.argv[2])
 
 #Number of realisations
 total_real = int(sys.argv[3])

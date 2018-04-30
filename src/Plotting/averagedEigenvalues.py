@@ -24,11 +24,11 @@ totalstates=int(sys.argv[1])
 
 #ARRAY GOING FROM 1 TO NUMBER OF STATES
 #EXCLUDING VACUUM STATE
-x = iter(xrange(totalstates-1))
+x = iter(xrange(totalstates))
 
 ax = plt.subplot(G[:,0:2])
 
-ax.set_xlim([0,totalstates])
+ax.set_xlim([0,totalstates+1])
 ax.set_ylim(-1*(np.amax(data)+0.1),(np.amax(data)+0.1))
 
 ax.xaxis.set_major_locator(MaxNLocator(integer=True))
@@ -37,7 +37,7 @@ ax.set_ylabel('Averaged Energy',fontsize=25)
 ax.tick_params(axis='x', labelsize=20)
 ax.tick_params(axis='y', labelsize=20)
 
-ax.plot(np.arange(1,totalstates),data, color='salmon', lw=2, marker='8')
+ax.plot(np.arange(1,totalstates+1),data, color='salmon', lw=2, marker='8')
 
 #GENERATE THREE SUBPLOTS TO
 #REPRESENT DIFFERENT REGIONS

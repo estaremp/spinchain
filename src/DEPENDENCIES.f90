@@ -11,6 +11,7 @@ CONTAINS
     include 'Hamiltonian_linear.f90'
     include 'Hamiltonian_star.f90'
     include 'Dynamics.f90'
+    include 'Time_integration.f90'
     include 'Reducedrho.f90'
     include 'Eof.f90'
 

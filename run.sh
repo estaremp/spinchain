@@ -19,9 +19,13 @@ mkdir output
 
 mv src/Plotting/*.pyc ./bin
 
-if [ $MAX_EOF = 'T' ] && [ $REALISATIONS -eq 1 ];
+
+if [ $MAX_EOF = 'T' ] && [ $REALISATIONS -eq 1 ] ;
 then
-python2 python_scripts/maxEOF.py eof.data $REALISATIONS $TOTALTIME $OFFNOISE $DIAGNOISE
+    if [ $METHOD = 'DIAG' ] ;
+    then
+    python2 python_scripts/maxEOF.py eof.data $REALISATIONS $TOTALTIME $OFFNOISE $DIAGNOISE
+    fi
 fi
 
 #Realisations if noise
@@ -65,20 +69,24 @@ then
 
 fi
 
-#Graphical outputs (not done if single time realisations)
-if [ $GRAPHICAL = 'T' ] && [ $SINGLE = 'F' ]  ;
+#Graphical outputs (not done if single time realisations or integration method)
+if [ $GRAPHICAL = 'T' ] && [ $SINGLE = 'F' ] ;
 then
     #Plot stuff
     echo ' >> Plot'
 
+    if [ $METHOD = 'DIAG' ] ;
+    then
     python2 bin/probabilities.pyc $VECTORS
     python2 bin/eigenvalues.pyc $VECTORS
+        if [ $EOF = 'T' ] ;
+        then
+        python2 bin/eof.pyc $TOTALTIME $INITIALVEC
+        fi
+    fi
     python2 bin/dynamics.pyc $TOTALTIME $INITIALVEC $N
     python2 bin/exmap.pyc $TOTALTIME
-    if [ $EOF = 'T' ] ;
-    then
-        python2 bin/eof.pyc $TOTALTIME $INITIALVEC
-    fi
+
 
     #If Plots have been created move them to the required folder
     mkdir output/Plots

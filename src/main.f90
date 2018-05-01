@@ -203,6 +203,14 @@ tmp = 'NO'
 write(40,211) adjustl(trim(tmp))
 endif
 
+212 FORMAT ("METHOD = ",A)
+if (integration) then
+tmp = 'INT'
+else if (diagonalisation) then
+tmp = 'DIAG'
+end if
+write(40,212) adjustl(trim(tmp))
+
 endif
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -215,6 +223,10 @@ endif
 
 if (count(coupling).ne.1) then
 STOP 'ERROR: only one coupling configurations can be chosen. Check your PARAMETERS file.'
+endif
+
+if (integration.and.diagonalisation) then
+STOP 'ERROR: only one method can be chosen. Check your PARAMETERS file.'
 endif
 
 if (linear) then
@@ -483,6 +495,8 @@ endif
 !!!! DIAGONALIZATION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+if (diagonalisation) then
+
 allocate(hamiD(vectorstotal,vectorstotal))
 allocate(eigvals(vectorstotal))
 allocate(rwork((2*(vectorstotal**2))+5*vectorstotal+1))
@@ -618,24 +632,37 @@ endif
 
 write(*,*) '>> Hamiltonian Diagonalization'
 
+end if
+
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!! DYNAMICS: FIDELITY, ENTROPY AND EOF !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!! INTEGRATION METHOD !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 allocate(c_i(vectorstotal))
 
 c_i=cmplx(0.0_dbl, 0.0_dbl, kind=dbl)
 
+if (integration) then
+    call time_integration(HT,hami,vectorstotal,c_i)
+    write(*,*) '>> Dynamics (direct integration method)'
+end if
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!! DYNAMICS: FIDELITY, ENTROPY AND EOF !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+if (diagonalisation) then
+
 if (dynamics) then
     call injection_dynamics(HT,hamiD,eigvals,vectorstotal,c_i)
-
     write(*,*) '>> Dynamics'
+end if
+
 end if
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!! CLACULATE EOF AT CERTAIN TIME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 
 !red_rho=cmplx(0.0_dbl, 0.0_dbl, kind=dbl)
 !
@@ -714,6 +741,14 @@ end if
     412 FORMAT ("MAX_EOF=",L)
     write(46,412) max_eof
 
+    413 FORMAT ("METHOD=",A)
+    if (integration) then
+    tmp = 'INT'
+    else if (diagonalisation) then
+    tmp = 'DIAG'
+    end if
+    write(46,413) adjustl(trim(tmp))
+
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!! FREE SPACE AND CLOSE FILES AND CLEAN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -732,12 +767,15 @@ deallocate(H2)
 deallocate(H3)
 deallocate(HT)
 deallocate(hami)
-deallocate(hamiD)
-deallocate(eigvals)
-deallocate(rwork)
-deallocate(work)
-deallocate(c_i)
 deallocate(Noise)
+deallocate(c_i)
+
+if (diagonalisation) then
+    deallocate(hamiD)
+    deallocate(eigvals)
+    deallocate(rwork)
+    deallocate(work)
+endif
 
 end program
 

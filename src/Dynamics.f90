@@ -109,6 +109,11 @@ do while (time<=totalTime)
         c_i(i) = sum_vec
     enddo
 
+    !Fidelities
+    do i=1,vectorstotal
+        fidelity(i) = (abs(c_i(i)))**2
+    enddo
+
     siteProb=0
     do i=1,vectorstotal
         do k=1,N
@@ -116,11 +121,6 @@ do while (time<=totalTime)
                 siteProb(k) = siteProb(k) + fidelity(i)
             endif
         enddo
-    enddo
-
-    !Fidelities
-    do i=1,vectorstotal
-        fidelity(i) = (abs(c_i(i)))**2
     enddo
 
     if (pst) then
@@ -208,5 +208,6 @@ deallocate(a_m)
 deallocate(Y_o)
 deallocate(Y_t)
 deallocate(red_rho)
+deallocate(fidelity)
 
 end subroutine

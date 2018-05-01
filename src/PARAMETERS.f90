@@ -8,8 +8,8 @@ use constants
 
 !*Define chain topology*!:
 !* Check one *!
-logical, parameter :: linear = .false.
-logical, parameter :: star = .true.
+logical, parameter :: linear = .true.
+logical, parameter :: star = .false.
 logical, parameter :: lattice = .false.
 logical, parameter :: squared = .false.
 
@@ -26,9 +26,13 @@ logical, parameter :: kitaev = .false.
 logical, parameter :: dynamics = .true.
 logical, parameter :: single = .false.
 
+!*What method do you wish to use to solve the Schrodinger eq.?*!:
+logical, parameter :: integration = .false.
+logical, parameter :: diagonalisation = .true.
+
 !*Define presence of disorder*!:
-logical, parameter :: random_J = .true. !Off-diagonal disorder
-logical, parameter :: random_D = .true. !Diagonal disorder
+logical, parameter :: random_J = .false. !Off-diagonal disorder
+logical, parameter :: random_D = .false. !Diagonal disorder
 
 !*Manage files*!:
 logical, parameter :: output = .true.
@@ -39,14 +43,14 @@ logical, parameter :: graphical = .true.
 !!Basic characteristics of the system *
 !**************************************
 
-integer, parameter :: N = 5           !Total number of sites
+integer, parameter :: N = 3           !Total number of sites
 integer, parameter :: exno = 1         !Total number of excitations
 
 integer, parameter :: numI = 1         !Total number of initial injected states
 integer, dimension(numI) :: initialVec
 !GO TO END OF FILE TO SPECIFY INITIAL VECTORS
 
-integer, parameter :: branches = 4     !Number of branches, if linear set to 1.
+integer, parameter :: branches = 1     !Number of branches, if linear set to 1.
 
 !**********************
 !!Coupling parameters *
@@ -67,14 +71,14 @@ integer, parameter        :: num_realisations = 10 !How many noise realisations 
 real(kind=dbl), parameter :: E_J = 0.10_dbl  !scale of the disorder on the couplings, in units of J_max
 real(kind=dbl), parameter :: E_D = 0.10_dbl !scale of the disorder on the sites, in units of J_max
 
-real(kind=dbl), parameter :: error=0.000001_dbl
+real(kind=dbl), parameter :: error=0.0001_dbl !allowed error for integration method and normalisation checks
 
 !**********************
 !!Dynamics parameters *
 !**********************
 
-integer, parameter :: steps = 5000
-real(kind=dbl), parameter :: totalTime = 50
+integer, parameter :: steps = 50000
+real(kind=dbl), parameter :: totalTime = 1
 real(kind=dbl), parameter :: t_A = 500   !time for single point calculation (set single option)
 
 

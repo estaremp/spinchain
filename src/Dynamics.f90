@@ -127,7 +127,7 @@ if (.not.single) then
 !****************************************************************
 !!CALCULATE AT EVERY TIME FIDELITY, EXMAP, RHO, EOF AND ENTROPY *
 !****************************************************************
-
+print*, time
 do while (time<=totalTime)
 
     do i=1,vectorstotal
@@ -147,9 +147,18 @@ do while (time<=totalTime)
         c_i(i) = sum_vec
     enddo
 
+if (time.eq.initialtime) then
+open (unit=51,file='state_dynamical.data',status='unknown')
+write(51,*) '#C_I dynamical.'
+write(51,*) (time - step_size)
+do i=1,vectorstotal
+write(51,*) c_i(i)
+enddo
+endif
+
     !Fidelities
     do i=1,vectorstotal
-        fidelity(i) = (abs(c_i(i)))**2
+        fidelity(i) = dconjg(c_i(i))*c_i(i)
     enddo
 
     siteProb=0
@@ -261,6 +270,7 @@ close(47)
 close(48)
 close(49)
 close(50)
+close(51)
 
 !deallocate
 deallocate(a_m)

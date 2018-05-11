@@ -81,7 +81,7 @@ real(kind=dbl), parameter :: error=0.0001_dbl !allowed error for integration met
 !**********************
 
 integer, parameter :: steps = 5000
-real(kind=dbl), parameter :: totalTime = 8
+real(kind=dbl), parameter :: totalTime = 16
 real(kind=dbl), parameter :: t_A = 500   !time for single point calculation (set single option)
 
 

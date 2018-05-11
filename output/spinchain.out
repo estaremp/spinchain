@@ -3,7 +3,7 @@
  ***********************************************************
             © Marta P. Estarellas, 27/07/2016              
                     University of York                     
-                    11/ 5/2018  17: 8
+                    11/ 5/2018  17:41
  -----------------------------------------------------------
 
 
@@ -14,8 +14,8 @@ COUPLING CONFIGURATION = PST
 INITIAL INJECTED VECTOR INDEX =   2                             
 DIAGONAL DISORDER = NO
 OFF-DIAGONAL DISORDER = NO
-TOTAL TIME = 8.00    
-TIME STEP = 0.0016  
+TOTAL TIME = 16.00   
+TIME STEP = 0.0032  
 EOF = Qubit 1  - Qubit 6  
 METHOD = DIAG
 

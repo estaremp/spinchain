@@ -22,7 +22,7 @@ use parameters
 integer, intent(in) :: vectorstotal
 integer, dimension(vectorstotal,vectorstotal), intent(in) :: HT
 
-real(kind=dbl), dimension(vectorstotal,vectorstotal), intent(in) :: hami
+complex(kind=dbl), dimension(vectorstotal,vectorstotal), intent(in) :: hami
 complex(kind=dbl), dimension(vectorstotal), intent(inout) :: c_i
 
 !local variables
@@ -45,10 +45,14 @@ fidelity=0._dbl
 !open files
 open (unit=44,file='dynamics.data',status='unknown')
 open (unit=45,file='exmap.data',status='unknown')
+open (unit=46,file='state.data',status='unknown')
+
 
 !writte comments on the oytputs
 write(44,*) '#DYNAMICS. TIME (1st COL) AND FIDELITIES AGAINST ALL THE BASIS VECTORS ORDERED BY INDEX NUMBER'
 write(45,*) '#DYNAMICS. TIME (1st COL) AND SITE OCCUPATION PROBABILITES ORDERED BY SITE'
+write(46,*) '#STATE AT TIME T. FIRST ROW IS TIME, FOLLOWING ROWS ARE THE STATE ORDERED IN THE BASIS VECTORS.'
+
 
 Dt = real(totalTime/steps) !stepsize
 
@@ -87,8 +91,8 @@ do while (time<=totalTime)
         sum=sum+(abs(c_i(i))**2)
     enddo
     if ((sum-1.0_dbl).gt.error) then
-        print*, "Error too big at time ",time, " and step_size ", Dt
-        STOP
+        write(*,*) "Error too big at time ",time, " and step_size ", Dt
+        STOP "Increase the number of steps OR reduce the time OR reduce the error."
     endif
 
     !Fidelities
@@ -117,8 +121,17 @@ do while (time<=totalTime)
     time = time + Dt
 enddo
 
+!******************************************
+!!OUTPUT STATE AT THE END OF SIMULATION ***
+!******************************************
+write(46,*) time
+do i=1,vectorstotal
+    write(46,*) c_i(i)
+enddo
+
 !close files
 close(44)
 close(45)
+close(46)
 
 end subroutine

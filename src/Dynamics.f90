@@ -33,6 +33,7 @@ integer :: i,j,k
 real(kind=dbl) :: norm
 real(kind=dbl) :: step_size
 real(kind=dbl) :: time
+real(kind=dbl) :: initialtime
 real(kind=dbl) :: eof_rho
 
 complex(kind=dbl) :: sum_vec
@@ -44,6 +45,7 @@ real(kind=dbl), dimension(N) :: siteProb
 complex(kind=dbl), allocatable, dimension(:) :: a_m
 complex(kind=dbl), allocatable, dimension(:,:) :: Y_o, Y_t
 complex(kind=dbl), allocatable, dimension(:,:) :: red_rho
+complex(kind=dbl), allocatable, dimension(:) :: initial_state
 
 !allocate arrays
 allocate(red_rho(4,4))
@@ -51,6 +53,7 @@ allocate(a_m(vectorstotal))
 allocate(fidelity(vectorstotal))
 allocate(Y_o(vectorstotal,vectorstotal))
 allocate(Y_t(vectorstotal,vectorstotal))
+allocate(initial_state(vectorstotal))
 
 !initialize fidelity
 fidelity=0._dbl
@@ -68,20 +71,40 @@ write(46,*) '#EOF. TIME (1st COL) AND EOF BETWEEN Q1 AND Q2'
 !normalisation factor
 norm=(1._dbl/sqrt(float(numI)))
 
-!get initial vector from PARAMETERS file inputs
-call initialState(initialVec)
+if (.not.read_state) then
+    !get initial vector from PARAMETERS file inputs
+    call initialState(initialVec)
+else
+    call readFromFile(vectorstotal,initial_state,initialtime)
+endif
 
 !Define |¥(0)> = \sum{a_m|m>} and a_m = <¥(0)|m>
 !being <¥(0)|=norm*(<initialVec1|+<initialVec2|+...)
+if (.not.read_state) then
 do i=1,vectorstotal
     a_m(i)=0
     do j=1,numI
         a_m(i) = a_m(i)+norm*(dconjg(hami(initialVec(j),i)))
     enddo
 enddo
+else
+!Initial state from the file
+do i=1,vectorstotal
+    a_m(i)=0
+    do j=1,vectorstotal
+        a_m(i) = a_m(i)+initial_state(j)*(hami(j,i))
+    enddo
+enddo
+endif
 
 step_size = totalTime/steps
-time = 0._dbl
+
+if (.not.read_state) then
+    time = 0._dbl
+else
+!Restart time from file
+    time = initialtime
+endif
 
 !main loop for the dynamics
 if (.not.single) then
@@ -198,10 +221,21 @@ else if (single) then
     endif
 endif
 
+!******************************************
+!!OUTPUT STATE AT THE END OF SIMULATION ***
+!******************************************
+open (unit=47,file='state.data',status='unknown')
+write(47,*) '#STATE AT TIME T. FIRST ROW IS TIME, FOLLOWING ROWS ARE THE STATE ORDERED IN THE BASIS VECTORS.'
+write(47,*) time
+do i=1,vectorstotal
+    write(47,*) c_i(i)
+enddo
+
 !close files
 close(44)
 close(45)
 close(46)
+close(47)
 
 !deallocate
 deallocate(a_m)
@@ -209,5 +243,6 @@ deallocate(Y_o)
 deallocate(Y_t)
 deallocate(red_rho)
 deallocate(fidelity)
+deallocate(initial_state)
 
 end subroutine

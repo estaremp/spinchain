@@ -3,7 +3,7 @@
  ***********************************************************
             © Marta P. Estarellas, 27/07/2016              
                     University of York                     
-                     1/ 5/2018  17:12
+                    11/ 5/2018  15:27
  -----------------------------------------------------------
 
 
@@ -11,11 +11,11 @@ NUMBER OF SITES = 3
 NUMBER OF EXCITATIONS = 1   
 TOPOLOGY = LINEAR
 COUPLING CONFIGURATION = UNIFORM
-INITIAL INJECTED VECTOR INDEX =   3                             
+INITIAL INJECTED VECTOR INDEX =   2                             
 DIAGONAL DISORDER = NO
 OFF-DIAGONAL DISORDER = NO
-TOTAL TIME = 1.00    
-TIME STEP = 0.0000  
+TOTAL TIME = 8.00    
+TIME STEP = 0.0002  
 EOF = Qubit 1  - Qubit 3  
 METHOD = DIAG
 

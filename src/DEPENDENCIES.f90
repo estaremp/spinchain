@@ -14,5 +14,6 @@ CONTAINS
     include 'Time_integration.f90'
     include 'Reducedrho.f90'
     include 'Eof.f90'
+    include 'Read_fromFile.f90'
 
 END MODULE

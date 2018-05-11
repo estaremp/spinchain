@@ -26,6 +26,9 @@ logical, parameter :: kitaev = .false.
 logical, parameter :: dynamics = .true.
 logical, parameter :: single = .false.
 
+!*You want to read the initial state from file?*!:
+logical, parameter :: read_state = .false.
+
 !*What method do you wish to use to solve the Schrodinger eq.?*!:
 logical, parameter :: integration = .false.
 logical, parameter :: diagonalisation = .true.
@@ -66,9 +69,9 @@ real(kind=dbl), parameter :: J_weak = 0.1   !SSH-like schemes.
 !************************************
 
 !*For average purposes*!:
-integer, parameter        :: num_realisations = 10 !How many noise realisations (1 by default)
+integer, parameter        :: num_realisations = 1 !How many noise realisations (1 by default)
 
-real(kind=dbl), parameter :: E_J = 0.10_dbl  !scale of the disorder on the couplings, in units of J_max
+real(kind=dbl), parameter :: E_J = 1.0_dbl  !scale of the disorder on the couplings, in units of J_max
 real(kind=dbl), parameter :: E_D = 0.10_dbl !scale of the disorder on the sites, in units of J_max
 
 real(kind=dbl), parameter :: error=0.0001_dbl !allowed error for integration method and normalisation checks
@@ -78,7 +81,7 @@ real(kind=dbl), parameter :: error=0.0001_dbl !allowed error for integration met
 !**********************
 
 integer, parameter :: steps = 50000
-real(kind=dbl), parameter :: totalTime = 1
+real(kind=dbl), parameter :: totalTime = 8
 real(kind=dbl), parameter :: t_A = 500   !time for single point calculation (set single option)
 
 
@@ -109,7 +112,7 @@ integer, dimension(numI), intent(inout) :: initialVec
 !Comment vectors not needed
 
 
-initialVec(1) = 3 !Initial state 1
+initialVec(1) = 2 !Initial state 1
 !initialVec(2) = 0  !Initial state 2
 !initialVec(3) = 0  !Initial state 3
 !initialVec(4) = 0  !Initial state 4

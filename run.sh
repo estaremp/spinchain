@@ -3,7 +3,11 @@
 #Clean
 make clean
 rm -rf ./bin
-rm -rf output
+
+#Move state into main folder for initialisation
+mv ./output/state.data ./
+
+rm -rf ./output
 
 #Compile files
 make

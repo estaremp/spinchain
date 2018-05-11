@@ -495,9 +495,18 @@ endif
 !!!! DIAGONALIZATION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+allocate(hamiD(vectorstotal,vectorstotal))
+
+!make copy of Hamiltonian and parse it into complex matrix
+hamiD=cmplx(0.0_dbl, 0.0_dbl, kind=dbl)
+do i=1,vectorstotal
+do j=1,vectorstotal
+hamiD(i,j)=(hami(i,j))
+enddo
+enddo
+
 if (diagonalisation) then
 
-allocate(hamiD(vectorstotal,vectorstotal))
 allocate(eigvals(vectorstotal))
 allocate(rwork((2*(vectorstotal**2))+5*vectorstotal+1))
 allocate(work((vectorstotal**2)+2*vectorstotal))
@@ -505,13 +514,6 @@ allocate(work((vectorstotal**2)+2*vectorstotal))
 liwork=5*vectorstotal+3
 
 allocate(iwork(liwork))
-
-hamiD=cmplx(0.0_dbl, 0.0_dbl, kind=dbl)
-do i=1,vectorstotal
-    do j=1,vectorstotal
-        hamiD(i,j)=(hami(i,j))
-    enddo
-enddo
 
 !save Hamiltonian matrix
 if (files) then
@@ -643,7 +645,7 @@ allocate(c_i(vectorstotal))
 c_i=cmplx(0.0_dbl, 0.0_dbl, kind=dbl)
 
 if (integration) then
-    call time_integration(HT,hami,vectorstotal,c_i)
+    call time_integration(HT,hamiD,vectorstotal,c_i)
     write(*,*) '>> Dynamics (direct integration method)'
 end if
 
@@ -769,12 +771,13 @@ deallocate(HT)
 deallocate(hami)
 deallocate(Noise)
 deallocate(c_i)
+deallocate(hamiD)
 
 if (diagonalisation) then
-    deallocate(hamiD)
     deallocate(eigvals)
     deallocate(rwork)
     deallocate(work)
+    deallocate(iwork)
 endif
 
 end program

@@ -23,11 +23,11 @@ logical, parameter :: abc = .false.
 logical, parameter :: kitaev = .false.
 
 !*You want to calculate dynamical figures?*!:
-logical, parameter :: dynamics = .true.
-logical, parameter :: single = .false.
+logical, parameter :: dynamics = .true. !calculation of dynamics
+logical, parameter :: single = .false.  !single point calculation
 
 !*You want to read the initial state from file?*!:
-logical, parameter :: read_state = .false.
+logical, parameter :: read_state = .false. !read from state, time needs to be higher than previous
 
 !*What method do you wish to use to solve the Schrodinger eq.?*!:
 logical, parameter :: integration = .false.

@@ -82,7 +82,7 @@ endif
 !being <¥(0)|=norm*(<initialVec1|+<initialVec2|+...)
 if (.not.read_state) then
 do i=1,vectorstotal
-    a_m(i)=0
+    a_m(i)=0._dbl
     do j=1,numI
         a_m(i) = a_m(i)+norm*(dconjg(hami(initialVec(j),i)))
     enddo
@@ -90,9 +90,9 @@ enddo
 else
 !Initial state from the file
 do i=1,vectorstotal
-    a_m(i)=0
+    a_m(i)=0._dbl
     do j=1,vectorstotal
-        a_m(i) = a_m(i)+initial_state(j)*(hami(j,i))
+        a_m(i) = a_m(i)+initial_state(j)*dconjg(hami(j,i))
     enddo
 enddo
 endif

@@ -42,13 +42,13 @@ close(60)
 !!RENORMALIZATION ***
 !********************
 
-norm = 0
+norm = 0._dbl
 do i=1,vectorstotal
-    norm = norm + abs(c_i(i))**2
+    norm = norm + dconjg(c_i(i))*(c_i(i))
 enddo
 
 do i=1,vectorstotal
-    initial_state(i)=((1._dbl)/(sqrt(norm)))*c_i(i)
+    initial_state(i)=(1._dbl/(sqrt(norm)))*c_i(i)
 enddo
 
 

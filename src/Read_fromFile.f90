@@ -35,7 +35,6 @@ read(60,*)
 read(60,*) time
 do i=1,vectorstotal
     read (60,*) c_i(i)
-    print*, c_i(i)
 enddo
 close(60)
 

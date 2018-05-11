@@ -106,6 +106,15 @@ else
     time = initialtime
 endif
 
+open (unit=48,file='initial_state.data',status='unknown')
+if (read_state) then
+write(48,*) '#STATE AT TIME T. FIRST ROW IS TIME, FOLLOWING ROWS ARE THE STATE ORDERED IN THE BASIS VECTORS.'
+write(48,*) time
+do i=1,vectorstotal
+    write(48,*) initial_state(i)
+enddo
+endif
+
 !main loop for the dynamics
 if (.not.single) then
 
@@ -236,6 +245,7 @@ close(44)
 close(45)
 close(46)
 close(47)
+close(48)
 
 !deallocate
 deallocate(a_m)

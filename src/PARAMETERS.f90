@@ -27,7 +27,7 @@ logical, parameter :: dynamics = .true. !calculation of dynamics
 logical, parameter :: single = .false.  !single point calculation
 
 !*You want to read the initial state from file?*!:
-logical, parameter :: read_state = .true. !read from state, time needs to be higher than previous
+logical, parameter :: read_state = .false. !read from state, time needs to be higher than previous
 
 !*What method do you wish to use to solve the Schrodinger eq.?*!:
 logical, parameter :: integration = .false.
@@ -81,7 +81,7 @@ real(kind=dbl), parameter :: error=0.0001_dbl !allowed error for integration met
 !**********************
 
 integer, parameter :: steps = 5000
-real(kind=dbl), parameter :: totalTime = 16
+real(kind=dbl), parameter :: totalTime = 8
 real(kind=dbl), parameter :: t_A = 500   !time for single point calculation (set single option)
 
 

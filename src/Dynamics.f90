@@ -97,6 +97,12 @@ do i=1,vectorstotal
 enddo
 endif
 
+open (unit=49,file='a_m.data',status='unknown')
+write(49,*) '#EIGENSTATE COEFFICIENTS OF THE INITIAL STATE.'
+do i=1,vectorstotal
+write(49,*) a_m(i)
+enddo
+
 step_size = totalTime/steps
 
 if (.not.read_state) then
@@ -235,7 +241,7 @@ endif
 !******************************************
 open (unit=47,file='state.data',status='unknown')
 write(47,*) '#STATE AT TIME T. FIRST ROW IS TIME, FOLLOWING ROWS ARE THE STATE ORDERED IN THE BASIS VECTORS.'
-write(47,*) time
+write(47,*) (time - step_size)
 do i=1,vectorstotal
     write(47,*) c_i(i)
 enddo
@@ -246,6 +252,7 @@ close(45)
 close(46)
 close(47)
 close(48)
+close(49)
 
 !deallocate
 deallocate(a_m)

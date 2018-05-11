@@ -97,7 +97,7 @@ do i=1,vectorstotal
 enddo
 endif
 
-open (unit=49,file='a_m.data',status='unknown')
+open (unit=49,file='a_m_initial.data',status='unknown')
 write(49,*) '#EIGENSTATE COEFFICIENTS OF THE INITIAL STATE.'
 do i=1,vectorstotal
 write(49,*) a_m(i)
@@ -246,6 +246,13 @@ do i=1,vectorstotal
     write(47,*) c_i(i)
 enddo
 
+open (unit=50,file='a_m_final.data',status='unknown')
+write(50,*) '#A_M VECTORS.'
+write(50,*) (time - step_size)
+do i=1,vectorstotal
+write(50,*) Y_t(i,1)/hami(i,1)
+enddo
+
 !close files
 close(44)
 close(45)
@@ -253,6 +260,7 @@ close(46)
 close(47)
 close(48)
 close(49)
+close(50)
 
 !deallocate
 deallocate(a_m)

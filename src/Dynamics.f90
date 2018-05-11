@@ -250,7 +250,7 @@ open (unit=50,file='a_m_final.data',status='unknown')
 write(50,*) '#A_M VECTORS.'
 write(50,*) (time - step_size)
 do i=1,vectorstotal
-write(50,*) Y_t(i,1)/hami(i,1)
+write(50,*) Y_t(2,i)/hami(2,i)
 enddo
 
 !close files

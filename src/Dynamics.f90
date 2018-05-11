@@ -106,6 +106,7 @@ enddo
 step_size = totalTime/steps
 
 if (.not.read_state) then
+    initialtime = 0._dbl
     time = 0._dbl
 else
 !Restart time from file
@@ -127,7 +128,6 @@ if (.not.single) then
 !****************************************************************
 !!CALCULATE AT EVERY TIME FIDELITY, EXMAP, RHO, EOF AND ENTROPY *
 !****************************************************************
-print*, time
 do while (time<=totalTime)
 
     do i=1,vectorstotal
@@ -147,7 +147,7 @@ do while (time<=totalTime)
         c_i(i) = sum_vec
     enddo
 
-if (time.eq.initialtime) then
+if (time.eq.(initialtime+step_size)) then
 open (unit=51,file='state_dynamical.data',status='unknown')
 write(51,*) '#C_I dynamical.'
 write(51,*) (time - step_size)

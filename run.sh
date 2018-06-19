@@ -28,7 +28,7 @@ if [ $MAX_EOF = 'T' ] && [ $REALISATIONS -eq 1 ] ;
 then
     if [ $METHOD = 'DIAG' ] ;
     then
-    python2 python_scripts/maxEOF.py eof.data $REALISATIONS $TOTALTIME $OFFNOISE $DIAGNOISE
+    python python_scripts/maxEOF.py eof.data $REALISATIONS $TOTALTIME $OFFNOISE $DIAGNOISE
     fi
 fi
 
@@ -52,19 +52,19 @@ then
         fi
     done
 
-    python2 python_scripts/averageEigenvalues.py eigenvalues_realisations.data $VECTORS $REALISATIONS
+    python python_scripts/averageEigenvalues.py eigenvalues_realisations.data $VECTORS $REALISATIONS
     if [ $SINGLE = 'T' ] ;
     then
-    python2 python_scripts/averageEOF.py eof_realisations_SP.data $TA $OFFNOISE $DIAGNOISE
+    python python_scripts/averageEOF.py eof_realisations_SP.data $TA $OFFNOISE $DIAGNOISE
     elif [ $MAX_EOF = 'T' ] ;
     then
-    python2 python_scripts/maxEOF.py eof_realisations_FD.data $REALISATIONS $TOTALTIME $OFFNOISE $DIAGNOISE
+    python python_scripts/maxEOF.py eof_realisations_FD.data $REALISATIONS $TOTALTIME $OFFNOISE $DIAGNOISE
     fi
 
     if [ $GRAPHICAL = 'T' ] ;
     then
     #Plot averaged
-    python2 bin/averagedEigenvalues.pyc $VECTORS
+    python bin/averagedEigenvalues.pyc $VECTORS
     fi
 
     #If Plots have been created move them to the required folder
@@ -81,15 +81,15 @@ then
 
     if [ $METHOD = 'DIAG' ] ;
     then
-    python2 bin/probabilities.pyc $VECTORS
-    python2 bin/eigenvalues.pyc $VECTORS
+    python bin/probabilities.pyc $VECTORS
+    python bin/eigenvalues.pyc $VECTORS
         if [ $EOF = 'T' ] ;
         then
         python2 bin/eof.pyc $TOTALTIME $INITIALVEC
         fi
     fi
-    python2 bin/dynamics.pyc $TOTALTIME $INITIALVEC $N
-    python2 bin/exmap.pyc $TOTALTIME
+    python bin/dynamics.pyc $TOTALTIME $INITIALVEC $N
+    python bin/exmap.pyc $TOTALTIME
 
 
     #If Plots have been created move them to the required folder

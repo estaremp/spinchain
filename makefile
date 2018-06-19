@@ -16,7 +16,7 @@ plots = $(bin)/*.pyc
 
 #Compilers 
 f90comp = gfortran
-Pycomp = python2 
+Pycomp = python 
 
 #Libraries
 libs = -llapack -lblas

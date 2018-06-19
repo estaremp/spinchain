@@ -30,7 +30,7 @@ integer :: i,j,k,p
 real(kind=dbl) :: norm
 
 !open files
-open (unit=60,file='state.data',status='old')
+open (unit=60,file='final_state.data',status='old')
 read(60,*)
 read(60,*) time
 do i=1,vectorstotal

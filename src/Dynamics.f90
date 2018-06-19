@@ -12,7 +12,7 @@
 ! Written by Marta Estarellas, v0.1, 31/03/2017                           !
 !=========================================================================!
 
-subroutine injection_dynamics(HT,hami,eigvals,vectorstotal,c_i)
+subroutine injection_dynamics(HT,hami,eigvals,vectorstotal,c_i,initialtime)
 
 !modules
 use constants
@@ -25,7 +25,9 @@ integer, dimension(vectorstotal,vectorstotal), intent(in) :: HT
 real(kind=dbl), dimension(vectorstotal), intent(in) :: eigvals
 
 complex(kind=dbl), dimension(vectorstotal,vectorstotal), intent(in) :: hami
+
 complex(kind=dbl), dimension(vectorstotal), intent(inout) :: c_i
+real(kind=dbl), intent(out) :: initialtime
 
 !local variables
 integer :: i,j,k
@@ -33,7 +35,6 @@ integer :: i,j,k
 real(kind=dbl) :: norm
 real(kind=dbl) :: step_size
 real(kind=dbl) :: time
-real(kind=dbl) :: initialtime
 real(kind=dbl) :: eof_rho
 
 complex(kind=dbl) :: sum_vec
@@ -54,6 +55,7 @@ allocate(fidelity(vectorstotal))
 allocate(Y_o(vectorstotal,vectorstotal))
 allocate(Y_t(vectorstotal,vectorstotal))
 allocate(initial_state(vectorstotal))
+
 
 !initialize fidelity
 fidelity=0._dbl
@@ -78,7 +80,7 @@ else
     call readFromFile(vectorstotal,initial_state,initialtime)
 endif
 
-!Define |¥(0)> = \sum{a_m|m>} and a_m = <¥(0)|m>
+!Define |¥(0)> = \sum{a_m|m>} and a_m = <m|Y(0)>
 !being <¥(0)|=norm*(<initialVec1|+<initialVec2|+...)
 if (.not.read_state) then
 do i=1,vectorstotal
@@ -97,20 +99,10 @@ do i=1,vectorstotal
 enddo
 endif
 
-open (unit=49,file='a_m_initial.data',status='unknown')
-write(49,*) '#EIGENSTATE COEFFICIENTS OF THE INITIAL STATE.'
-do i=1,vectorstotal
-write(49,*) a_m(i)
-enddo
-
 step_size = totalTime/steps
 
 if (.not.read_state) then
     initialtime = 0._dbl
-    time = 0._dbl
-else
-!Restart time from file
-    time = initialtime
 endif
 
 open (unit=48,file='initial_state.data',status='unknown')
@@ -122,6 +114,7 @@ do i=1,vectorstotal
 enddo
 endif
 
+time = 0._dbl
 !main loop for the dynamics
 if (.not.single) then
 
@@ -130,6 +123,7 @@ if (.not.single) then
 !****************************************************************
 do while (time<=totalTime)
 
+    print*, initialtime+time
     do i=1,vectorstotal
         do j=1,vectorstotal
             Y_o(i,j) = hami(i,j)*a_m(j)
@@ -147,15 +141,6 @@ do while (time<=totalTime)
         c_i(i) = sum_vec
     enddo
 
-if (time.eq.(initialtime+step_size)) then
-open (unit=51,file='state_dynamical.data',status='unknown')
-write(51,*) '#C_I dynamical.'
-write(51,*) (time - step_size)
-do i=1,vectorstotal
-write(51,*) c_i(i)
-enddo
-endif
-
     !Fidelities
     do i=1,vectorstotal
         fidelity(i) = dconjg(c_i(i))*c_i(i)
@@ -171,11 +156,11 @@ endif
     enddo
 
     if (pst) then
-        write(44,*) time*J_max, fidelity
-        write(45,*) time*J_max, siteProb
+        write(44,*) (initialtime+time)*J_max, fidelity
+        write(45,*) (initialtime+time)*J_max, siteProb
     else
-        write(44,*) time*J_max, fidelity
-        write(45,*) time*J_max, siteProb
+        write(44,*) (initialtime+time)*J_max, fidelity
+        write(45,*) (initialtime+time)*J_max, siteProb
     endif
 
     !calculate eof for all times
@@ -183,7 +168,7 @@ endif
         red_rho=cmplx(0.0_dbl, 0.0_dbl, kind=dbl)
         call reduced_density_matrix(HT,vectorstotal,red_rho,c_i)
         call entanglement_of_formation(red_rho,eof_rho)
-        write(46,*) time*J_max, eof_rho
+        write(46,*) (initialtime+time)*J_max, eof_rho
     endif
 
     !increase value of time
@@ -248,18 +233,11 @@ endif
 !******************************************
 !!OUTPUT STATE AT THE END OF SIMULATION ***
 !******************************************
-open (unit=47,file='state.data',status='unknown')
+open (unit=47,file='final_state.data',status='unknown')
 write(47,*) '#STATE AT TIME T. FIRST ROW IS TIME, FOLLOWING ROWS ARE THE STATE ORDERED IN THE BASIS VECTORS.'
 write(47,*) (time - step_size)
 do i=1,vectorstotal
     write(47,*) c_i(i)
-enddo
-
-open (unit=50,file='a_m_final.data',status='unknown')
-write(50,*) '#A_M VECTORS.'
-write(50,*) (time - step_size)
-do i=1,vectorstotal
-write(50,*) Y_t(2,i)/hami(2,i)
 enddo
 
 !close files
@@ -268,9 +246,6 @@ close(45)
 close(46)
 close(47)
 close(48)
-close(49)
-close(50)
-close(51)
 
 !deallocate
 deallocate(a_m)

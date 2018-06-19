@@ -5,7 +5,7 @@ make clean
 rm -rf ./bin
 
 #Move state into main folder for initialisation
-mv ./output/state.data ./
+mv ./output/final_state.data ./
 
 rm -rf ./output
 
@@ -85,7 +85,7 @@ then
     python bin/eigenvalues.pyc $VECTORS
         if [ $EOF = 'T' ] ;
         then
-        python2 bin/eof.pyc $TOTALTIME $INITIALVEC
+        python bin/eof.pyc $TOTALTIME $INITIALVEC
         fi
     fi
     python bin/dynamics.pyc $TOTALTIME $INITIALVEC $N

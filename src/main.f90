@@ -62,6 +62,7 @@ integer, allocatable, dimension(:,:) :: H1,H2,H3,HT !Hilbert subspaces matrices
 !floats
 real(kind=dbl) :: normal,orto !normaliztion constant
 real(kind=dbl) :: r !random number
+real(kind=dbl) :: initialtime
 
 real(kind=dbl), dimension(N-1) :: Js = 0.0_dbl
 
@@ -87,10 +88,10 @@ character(len=500) :: fmt1,fmt2 !format descriptors
 !random number generator
 real(dubp), external :: algor_uniform_random
 
-
 !logicals
 logical, parameter, dimension(4) :: topology = (/linear,star,lattice,squared/)
 logical, parameter, dimension(6) :: coupling = (/uniform, pst, ssh_a, ssh_b, abc, kitaev/)
+
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!! START PROGRAM AND WRITE OUTPUT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -656,7 +657,7 @@ end if
 if (diagonalisation) then
 
 if (dynamics) then
-    call injection_dynamics(HT,hamiD,eigvals,vectorstotal,c_i)
+    call injection_dynamics(HT,hamiD,eigvals,vectorstotal,c_i,initialtime)
     write(*,*) '>> Dynamics'
 end if
 
@@ -713,7 +714,7 @@ end if
     write(46,404) adjustl(trim(tmp))
 
     405 FORMAT ("TOTALTIME=",A)
-    write(tmp,'(f8.2)') totaltime
+    write(tmp,'(f8.2)') initialtime+totaltime
     write(46,405) adjustl(trim(tmp))
 
     406 FORMAT ("TA=",A)

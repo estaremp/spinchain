@@ -45,7 +45,7 @@ fidelity=0._dbl
 !open files
 open (unit=44,file='dynamics.data',status='unknown')
 open (unit=45,file='exmap.data',status='unknown')
-open (unit=46,file='state.data',status='unknown')
+open (unit=46,file='caca.data',status='unknown')
 
 
 !writte comments on the oytputs

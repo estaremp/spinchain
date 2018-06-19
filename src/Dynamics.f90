@@ -123,7 +123,6 @@ if (.not.single) then
 !****************************************************************
 do while (time<=totalTime)
 
-    print*, initialtime+time
     do i=1,vectorstotal
         do j=1,vectorstotal
             Y_o(i,j) = hami(i,j)*a_m(j)

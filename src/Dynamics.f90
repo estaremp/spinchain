@@ -66,7 +66,7 @@ open (unit=45,file='exmap.data',status='unknown')
 open (unit=46,file='eof.data',status='unknown')
 
 !writte comments on the oytputs
-write(44,*) '#DYNAMICS. TIME (1st COL) AND FIDELITIES AGAINST ALL THE BASIS VECTORS ORDERED BY INDEX NUMBER'
+write(44,*) '#DYNAMICS. TIME (1st COL) AND EVOLVED COEFFICIENTS ALL THE BASIS VECTORS ORDERED BY INDEX NUMBER'
 write(45,*) '#DYNAMICS. TIME (1st COL) AND SITE OCCUPATION PROBABILITES ORDERED BY SITE'
 write(46,*) '#EOF. TIME (1st COL) AND EOF BETWEEN Q1 AND Q2'
 
@@ -155,10 +155,10 @@ do while (time<=totalTime)
     enddo
 
     if (pst) then
-        write(44,*) (initialtime+time)*J_max, fidelity
+        write(44,*) (initialtime+time)*J_max, c_i
         write(45,*) (initialtime+time)*J_max, siteProb
     else
-        write(44,*) (initialtime+time)*J_max, fidelity
+        write(44,*) (initialtime+time)*J_max, c_i
         write(45,*) (initialtime+time)*J_max, siteProb
     endif
 
@@ -213,10 +213,11 @@ else if (single) then
     enddo
 
     if (pst) then
-        write(44,*) time*J_max, fidelity
+        print*, c_i
+        write(44,*) time*J_max, c_i
         write(45,*) time*J_max, siteProb
     else
-        write(44,*) time*J_max, fidelity
+        write(44,*) time*J_max, c_i
         write(45,*) time*J_max, siteProb
     endif
 

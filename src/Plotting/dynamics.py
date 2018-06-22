@@ -1,9 +1,19 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import re
 from pylab import *
 
+#CHANGE FORMAT FOR THE COMPLEX NUMBERS FORTRAN->PYTHON
+input=open('dynamics.data','r')
+output=open('dynamics_formatted.data','a')
+for line in input:
+    line=re.sub(r'\(([^,\)]+),([^,\)]+)\)', r'\1+\2j', line.rstrip())
+    line=re.sub(r'\+-',r'-',line)
+    output.write(line+'\n')
+output.close()
+
 #READ THE DATA FROM FILE
-fidelity=np.loadtxt('dynamics.data',comments='#')
+fidelity = np.loadtxt('dynamics_formatted.data',dtype=complex,comments='#')
 
 #SET SIZE FIGURE
 plt.figure(figsize=(10,7))
@@ -20,17 +30,13 @@ ax1=plt.subplot()
 ax1.set_xlim([0,totaltime])
 ax1.set_ylim([0,1])
 
-#PLOT FIDELITY AGAINST INITIAL STATE
-plt.plot(fidelity[:,0],fidelity[:,injection],color='gray',lw=2,label=r'$|\langle\Psi(t)\vert \psi_{o}\rangle|^2$')
+#PLOT FIDELITY AGAINST INITIAL STATE (CHANGE WHENEVER)
+f=(np.absolute((fidelity[:,1])+(fidelity[:,2])+(fidelity[:,8])+(fidelity[:,14]))/2.)**2
+plt.plot(fidelity[:,0],f,color='gray',lw=2,label=r'$|\langle\Psi(t)\vert \psi_{o}\rangle|^2$')
 
 #PLOT FIDELITY AGAINST DIFFERENT STATE
-
-#FOR LINEAR CHAINS WIHT ONE EX, MIRROR STATE IS:
-against=N-injection+3
-#CHANGE VALUE OF 'AGAINST' TO SET THE INDEX OF THE VECTOR
-#AGAINT WHICH YOU WANT TO PLOT THE FIDELITY
-
-plt.plot(fidelity[:,0],fidelity[:,against],color='black',ls=':',lw=2,label=r'$|\langle\Psi(t)\vert \psi_{M}\rangle|^2$')
+fa=(np.absolute((fidelity[:,1])-(fidelity[:,2])-(fidelity[:,8])-(fidelity[:,14]))/2.)**2
+plt.plot(fidelity[:,0],fa,color='black',ls=':',lw=2,label=r'$|\langle\Psi(t)\vert \psi_{A}\rangle|^2$')
 
 #SET SIZE OF AXIS TICKS
 ax1.tick_params(axis='y', labelsize=20)

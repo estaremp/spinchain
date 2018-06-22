@@ -657,6 +657,7 @@ end if
 if (diagonalisation) then
 
 if (dynamics) then
+
     call injection_dynamics(HT,hamiD,eigvals,vectorstotal,c_i,initialtime)
     write(*,*) '>> Dynamics'
 end if

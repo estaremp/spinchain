@@ -1,9 +1,19 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from pylab import *
+import re
+
+#CHANGE FORMAT FOR THE COMPLEX NUMBERS FORTRAN->PYTHON
+input=open('dynamics.data','r')
+output=open('dynamicse_formatted.data','a')
+for line in input:
+    line=re.sub(r'\(([^,\)]+),([^,\)]+)\)', r'\1+\2j', line.rstrip())
+    line=re.sub(r'\+-',r'-',line)
+    output.write(line+'\n')
+output.close()
 
 #READ THE DATA FROM FILE
-fidelity=np.loadtxt('dynamics.data',comments='#')
+fidelity = np.loadtxt('dynamicse_formatted.data',dtype=complex,comments='#')
 entanglement=np.loadtxt('eof.data',comments='#')
 
 #SET SIZE FIGURE
@@ -20,8 +30,11 @@ ax=plt.subplot()
 ax.set_xlim([0,totaltime])
 ax.set_ylim([0,1])
 
-#PLOT FIDELITY AGAINST INITIAL STATE
-plt.plot(fidelity[:,0],fidelity[:,injection],color='red',lw=2,ls='-',markevery=500,label=r'$|\langle\Psi(0)|\Psi(t)\rangle|^2$')
+#DEFINE STATE TO MEASURE FIDELITY AGAINST TO
+f=(np.absolute((fidelity[:,1])+(fidelity[:,2])+(fidelity[:,8])+(fidelity[:,14]))/2.)**2
+
+#PLOT FIDELITY AGAINST ANY STATE F
+plt.plot(fidelity[:,0],f,color='red',lw=2,ls='-',markevery=500,label=r'$|\langle\Psi(0)|\Psi(t)\rangle|^2$')
 
 #PLOT EOF
 plt.plot(entanglement[:,0],entanglement[:,1],color='limegreen',lw=2,label='$EOF$')

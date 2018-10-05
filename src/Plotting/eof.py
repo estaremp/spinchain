@@ -34,7 +34,7 @@ ax.set_ylim([0,1])
 f=(np.absolute((fidelity[:,1])+(fidelity[:,2])+(fidelity[:,8])+(fidelity[:,14]))/2.)**2
 
 #PLOT FIDELITY AGAINST ANY STATE F
-plt.plot(fidelity[:,0],f,color='red',lw=2,ls='-',markevery=500,label=r'$|\langle\Psi(0)|\Psi(t)\rangle|^2$')
+plt.plot(np.absolute(fidelity[:,0]),f,color='red',lw=2,ls='-',markevery=500,label=r'$|\langle\Psi(0)|\Psi(t)\rangle|^2$')
 
 #PLOT EOF
 plt.plot(entanglement[:,0],entanglement[:,1],color='limegreen',lw=2,label='$EOF$')

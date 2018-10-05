@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import re
+import sys
 from pylab import *
 
 #CHANGE FORMAT FOR THE COMPLEX NUMBERS FORTRAN->PYTHON
@@ -32,11 +33,11 @@ ax1.set_ylim([0,1])
 
 #PLOT FIDELITY AGAINST INITIAL STATE (CHANGE WHENEVER)
 f=(np.absolute((fidelity[:,1])+(fidelity[:,2])+(fidelity[:,8])+(fidelity[:,14]))/2.)**2
-plt.plot(fidelity[:,0],f,color='gray',lw=2,label=r'$|\langle\Psi(t)\vert \psi_{o}\rangle|^2$')
+plt.plot(np.absolute(fidelity[:,0]),f,color='gray',lw=2,label=r'$|\langle\Psi(t)\vert \psi_{o}\rangle|^2$')
 
 #PLOT FIDELITY AGAINST DIFFERENT STATE
 fa=(np.absolute((fidelity[:,1])-(fidelity[:,2])-(fidelity[:,8])-(fidelity[:,14]))/2.)**2
-plt.plot(fidelity[:,0],fa,color='black',ls=':',lw=2,label=r'$|\langle\Psi(t)\vert \psi_{A}\rangle|^2$')
+plt.plot(np.absolute(fidelity[:,0]),fa,color='black',ls=':',lw=2,label=r'$|\langle\Psi(t)\vert \psi_{A}\rangle|^2$')
 
 #SET SIZE OF AXIS TICKS
 ax1.tick_params(axis='y', labelsize=20)

@@ -85,7 +85,7 @@ ax2.spines['right'].set_visible(False)
 #INVISIBLE AXIS TICKS
 #ax1.xaxis.tick_top()
 ax2.xaxis.tick_top()
-ax2.tick_params(labeltop='off')  # don't put tick labels at the top
+ax2.tick_params(labeltop=False)  # don't put tick labels at the top
 #ax3.xaxis.tick_top()
 #ax3.tick_params(labeltop='off')  # don't put tick labels at the top
 

@@ -15,11 +15,11 @@ logical, parameter :: squared = .false.
 
 !*Define couplings scheme*!:
 !* Check one *!
-logical, parameter :: uniform = .false.
+logical, parameter :: uniform = .true.
 logical, parameter :: pst = .false.
 logical, parameter :: ssh_a = .false.
 logical, parameter :: ssh_b = .false.
-logical, parameter :: abc = .true.
+logical, parameter :: abc = .false.
 logical, parameter :: kitaev = .false.
 
 !*You want to calculate dynamical figures?*!:
@@ -46,10 +46,10 @@ logical, parameter :: graphical = .true.
 !!Basic characteristics of the system *
 !**************************************
 
-integer, parameter :: N = 7           !Total number of sites
-integer, parameter :: exno = 2         !Total number of excitations
+integer, parameter :: N = 3           !Total number of sites
+integer, parameter :: exno = 1         !Total number of excitations
 
-integer, parameter :: numI = 4         !Total number of initial injected states
+integer, parameter :: numI = 1         !Total number of initial injected states
 integer, dimension(numI) :: initialVec
 !GO TO END OF FILE TO SPECIFY INITIAL VECTORS
 
@@ -81,7 +81,7 @@ real(kind=dbl), parameter :: error=0.0001_dbl !allowed error for integration met
 !**********************
 
 integer, parameter :: steps = 5000
-real(kind=dbl), parameter :: totalTime = 500 !total time for the dynamics
+real(kind=dbl), parameter :: totalTime = 10 !total time for the dynamics
 real(kind=dbl), parameter :: t_A = 5  !time for single point calculation (set single option)
 
 
@@ -90,8 +90,8 @@ real(kind=dbl), parameter :: t_A = 5  !time for single point calculation (set si
 !****************
 
 !choose your measure
-logical, parameter :: eof = .true.
-logical, parameter :: max_eof = .true. !calculates the maximum eof over
+logical, parameter :: eof = .false.
+logical, parameter :: max_eof = .false. !calculates the maximum eof over
                                       !a time window = totalTime
 
 !qubits to trace for EOF
@@ -112,10 +112,10 @@ integer, dimension(numI), intent(inout) :: initialVec
 !Comment vectors not needed
 
 
-initialVec(1) = 1  !Initial state 1
-initialVec(2) = 2  !Initial state 2
-initialVec(3) = 8  !Initial state 3
-initialVec(4) = 14 !Initial state 4
+initialVec(1) = 2  !Initial state 1
+!initialVec(2) = 2  !Initial state 2
+!initialVec(3) = 8  !Initial state 3
+!initialVec(4) = 14 !Initial state 4
 
 !!Keep adding vectors in this fashion and with this same numenclature
 !!Normalisation is done automatically

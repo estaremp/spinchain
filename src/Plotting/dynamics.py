@@ -36,7 +36,7 @@ f=(np.absolute((fidelity[:,2])))**2
 plt.plot(np.absolute(fidelity[:,0]),f,color='gray',lw=2,label=r'$|\langle\Psi(t)\vert \psi_{o}\rangle|^2$')
 
 #PLOT FIDELITY AGAINST DIFFERENT STATE
-fa=(np.absolute((fidelity[:,4])))**2
+fa=(np.absolute((fidelity[:,N+1])))**2
 plt.plot(np.absolute(fidelity[:,0]),fa,color='black',ls=':',lw=2,label=r'$|\langle\Psi(t)\vert \psi_{A}\rangle|^2$')
 
 #SET SIZE OF AXIS TICKS

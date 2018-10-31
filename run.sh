@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Clean
-make clean
+#make clean
 rm -rf ./bin
 
 #Move state into main folder for initialisation

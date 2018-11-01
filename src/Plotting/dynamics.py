@@ -8,7 +8,7 @@ from pylab import *
 input=open('dynamics.data','r')
 output=open('dynamics_formatted.data','a')
 for line in input:
-    line=re.sub(r'\(([^,\)]+),([^,\)]+)\)', r'\1+\2j', line.rstrip())
+    line=re.sub(r'\(([^,\)]+),([^,\)]+)\)', r' \1+\2j ', line.replace(' ',''))
     line=re.sub(r'\+-',r'-',line)
     output.write(line+'\n')
 output.close()

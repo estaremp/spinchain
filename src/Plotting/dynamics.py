@@ -32,12 +32,16 @@ ax1.set_xlim([0,totaltime])
 ax1.set_ylim([0,1])
 
 #PLOT FIDELITY AGAINST INITIAL STATE (CHANGE WHENEVER)
-f=(np.absolute((fidelity[:,2])))**2
-plt.plot(np.absolute(fidelity[:,0]),f,color='gray',lw=2,label=r'$|\langle\Psi(t)\vert \psi_{o}\rangle|^2$')
+f=(np.absolute((fidelity[:,9])+(fidelity[:,10])+(fidelity[:,14])+(fidelity[:,15]))/2.)**2
+#plt.plot(np.absolute(fidelity[:,0]),f,color='gray',lw=2,label=r'$|\langle\Psi(t)\vert \psi_{o}\rangle|^2$')
 
 #PLOT FIDELITY AGAINST DIFFERENT STATE
-fa=(np.absolute((fidelity[:,N+1])))**2
-plt.plot(np.absolute(fidelity[:,0]),fa,color='black',ls=':',lw=2,label=r'$|\langle\Psi(t)\vert \psi_{A}\rangle|^2$')
+fa=(np.absolute((fidelity[:,8])+(fidelity[:,16])+(fidelity[:,9])+(fidelity[:,10])+(fidelity[:,14])+(fidelity[:,15]))/sqrt(6))**2
+#plt.plot(np.absolute(fidelity[:,0]),fa,color='black',ls=':',lw=2,label=r'$|\langle\Psi(t)\vert \psi_{A}\rangle|^2$')
+
+for i in range(7,17,1):
+    print i
+    plt.plot(np.absolute(fidelity[:,0]),np.absolute((fidelity[:,i]))**2)
 
 #SET SIZE OF AXIS TICKS
 ax1.tick_params(axis='y', labelsize=20)

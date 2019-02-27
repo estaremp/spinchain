@@ -8,8 +8,8 @@ use constants
 
 !*Define chain topology*!:
 !* Check one *!
-logical, parameter :: linear = .true.
-logical, parameter :: star = .false.
+logical, parameter :: linear = .false.
+logical, parameter :: star = .true.
 logical, parameter :: lattice = .false.
 logical, parameter :: squared = .false.
 
@@ -46,14 +46,14 @@ logical, parameter :: graphical = .true.
 !!Basic characteristics of the system *
 !**************************************
 
-integer, parameter :: N = 3           !Total number of sites
-integer, parameter :: exno = 1         !Total number of excitations
+integer, parameter :: N = 5           !Total number of sites
+integer, parameter :: exno = 2         !Total number of excitations
 
-integer, parameter :: numI = 1         !Total number of initial injected states
+integer, parameter :: numI = 4         !Total number of initial injected states
 integer, dimension(numI) :: initialVec
 !GO TO END OF FILE TO SPECIFY INITIAL VECTORS
 
-integer, parameter :: branches = 1     !Number of branches, if linear set to 1.
+integer, parameter :: branches = 4     !Number of branches, if linear set to 1.
 
 !**********************
 !!Coupling parameters *
@@ -90,13 +90,13 @@ real(kind=dbl), parameter :: t_A = 5  !time for single point calculation (set si
 !****************
 
 !choose your measure
-logical, parameter :: eof = .false.
+logical, parameter :: eof = .true.
 logical, parameter :: max_eof = .false. !calculates the maximum eof over
                                       !a time window = totalTime
 
 !qubits to trace for EOF
 integer, parameter :: Q1 = 1
-integer, parameter :: Q2 = N
+integer, parameter :: Q2 = 4
 
 
 !****************
@@ -112,10 +112,10 @@ integer, dimension(numI), intent(inout) :: initialVec
 !Comment vectors not needed
 
 
-initialVec(1) = 2  !Initial state 1
-!initialVec(2) = 2  !Initial state 2
-!initialVec(3) = 8  !Initial state 3
-!initialVec(4) = 14 !Initial state 4
+initialVec(1) = 9  !Initial state 1
+initialVec(2) = 10  !Initial state 2
+initialVec(3) = 14  !Initial state 3
+initialVec(4) = 15  !Initial state 4
 
 !!Keep adding vectors in this fashion and with this same numenclature
 !!Normalisation is done automatically

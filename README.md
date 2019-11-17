@@ -41,7 +41,7 @@ See https://github.com/estaremp/spinchain/wiki for more info.
 **Requirements:**
 This is prepared be compiled by: 
 * GNU-GCC 6.3.9 gfortran (https://gcc.gnu.org/wiki/GFortran)
-* Python 2.7. (https://www.python.org/download/releases/2.7/)
+* Python 3.7. (https://www.python.org/download/releases/python-370/)
 * BLAS libraries (http://www.netlib.org/blas/) 
 * LAPACK libraries (http://www.netlib.org/lapack/)
 * MATPLOTLIB (https://matplotlib.org/)

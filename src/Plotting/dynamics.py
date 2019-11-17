@@ -40,7 +40,6 @@ fa=(np.absolute((fidelity[:,8])+(fidelity[:,16])+(fidelity[:,9])+(fidelity[:,10]
 #plt.plot(np.absolute(fidelity[:,0]),fa,color='black',ls=':',lw=2,label=r'$|\langle\Psi(t)\vert \psi_{A}\rangle|^2$')
 
 for i in range(7,17,1):
-    print i
     plt.plot(np.absolute(fidelity[:,0]),np.absolute((fidelity[:,i]))**2)
 
 #SET SIZE OF AXIS TICKS
@@ -52,7 +51,7 @@ plt.xlabel('$\mathrm{time \cdot J_{max}}$',fontsize=25,color='black')
 plt.ylabel('${\cal{F}}(t)$',fontsize=25,color='black')
 
 #LEGEND
-l=legend(loc=1,frameon=False,borderaxespad=0.,fontsize=20)
+#l=legend(loc=1,frameon=False,borderaxespad=0.,fontsize=20)
 
 #SAVE AS PNG PICTURE
 savefig('dynamics.png',transparent=False)

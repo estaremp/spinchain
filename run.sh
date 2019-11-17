@@ -21,7 +21,7 @@ source 'info.data'
 #Create output directory
 mkdir output
 
-mv src/Plotting/*.pyc ./bin
+cp src/Plotting/*.py ./bin
 
 
 if [ $MAX_EOF = 'T' ] && [ $REALISATIONS -eq 1 ] ;
@@ -64,7 +64,7 @@ then
     if [ $GRAPHICAL = 'T' ] ;
     then
     #Plot averaged
-    python bin/averagedEigenvalues.pyc $VECTORS
+    python bin/averagedEigenvalues.py $VECTORS
     fi
 
     #If Plots have been created move them to the required folder
@@ -81,15 +81,15 @@ then
 
     if [ $METHOD = 'DIAG' ] ;
     then
-    python bin/probabilities.pyc $VECTORS
-    python bin/eigenvalues.pyc $VECTORS
+    python bin/probabilities.py $VECTORS
+    python bin/eigenvalues.py $VECTORS
         if [ $EOF = 'T' ] ;
         then
-        python bin/eof.pyc $TOTALTIME $INITIALVEC
+        python bin/eof.py $TOTALTIME $INITIALVEC
         fi
     fi
-    python bin/dynamics.pyc $TOTALTIME $INITIALVEC $N
-    python bin/exmap.pyc $TOTALTIME
+    python bin/dynamics.py $TOTALTIME $INITIALVEC $N
+    python bin/exmap.py $TOTALTIME
 
 
     #If Plots have been created move them to the required folder

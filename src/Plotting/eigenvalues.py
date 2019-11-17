@@ -24,7 +24,7 @@ totalstates=int(sys.argv[1])
 
 #ARRAY GOING FROM 1 TO NUMBER OF STATES
 #EXCLUDING VACUUM STATE
-x = iter(xrange(totalstates))
+x = iter(range(totalstates))
 
 ax = plt.subplot(G[:,0:2])
 
